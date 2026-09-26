@@ -198,7 +198,7 @@ openInvitationButton.addEventListener("click", () => {
     invitationEl.classList.add("visible");
     invitationEl.scrollTop = 0;
     // Start after layout has committed, then retry if the browser has not yet
-    // calculated the five-page scroll height.
+    // calculated the invitation scroll height.
     requestAnimationFrame(() => startAutoScroll());
   }, 650);
 
@@ -272,9 +272,6 @@ function setupScrollReveals() {
     "#page4 .eyebrow",
     "#page4 h2",
     "#page4 .messages-rsvp",
-    "#page5 .script",
-    "#page5 h2",
-    "#page5 .page-content > p:last-child"
   ];
 
   const elements = document.querySelectorAll(revealSelectors.join(","));
@@ -336,7 +333,7 @@ function setupScrollReveals() {
   }, {
     root: invitationEl,
     // Central active zone, with a short upper fade area.
-    rootMargin: "-20% 0px -18% 0px",
+    rootMargin: "-15% 0px -15% 0px",
     threshold: 0.01
   });
 
@@ -358,7 +355,7 @@ function setupScrollReveals() {
         entry.target.classList.add(direction === "down" ? "is-leaving-down" : "is-leaving-up");
       }
       entry.target._lastRevealDirection = scrollDirection;
-    }, { root: invitationEl, rootMargin: "0px 0px -10% 0px", threshold: 0.01 });
+    }, { root: invitationEl, rootMargin: "-15% 0px -15% 0px", threshold: 0.01 });
     eyebrowObserver.observe(page1Eyebrow);
   }
 }
@@ -404,7 +401,7 @@ function setupMessageReveals() {
     // invitation element. The nested scroller still controls which messages
     // are brought into view when there are more than three visible.
     root: invitationEl,
-    rootMargin: "-20% 0px -18% 0px",
+    rootMargin: "-15% 0px -15% 0px",
     threshold: 0.01
   });
 
