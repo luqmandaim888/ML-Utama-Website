@@ -272,25 +272,25 @@ button { font: inherit; }
 .couple-names span { font-size: .5em; margin: 3px 0; }
 
 /* PAGE 3 */
-.page-three { padding-top: 58px; padding-bottom: 105px; }
-.page-three-content { display: grid; gap: 26px; }
-.save-date-block h2 { margin-bottom: 12px; }
+.page-three { padding-top: 42px; padding-bottom: 86px; }
+.page-three-content { display: grid; gap: 18px; }
+.save-date-block h2 { margin-bottom: 8px; }
 .script { margin: 0 0 6px; font: 400 38px/1 "Great Vibes", cursive; color: var(--blue-dark); }
 h2 { margin: 0 0 18px; font: 600 35px/1.05 "Cormorant Garamond", serif; color: var(--blue-dark); }
 .section p { line-height: 1.85; font-size: 12px; color: var(--muted); }
 .detail-date { font-family: "Cormorant Garamond", serif; font-size: 23px !important; color: var(--ink) !important; }
-.countdown-block { padding-top: 4px; }
+.countdown-block { padding-top: 0; }
 .countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-top: 14px; }
 .countdown div, .attendance div { display: grid; gap: 5px; }
 .countdown strong { font: 600 30px/1 "Cormorant Garamond", serif; color: var(--blue-dark); }
 .countdown span, .attendance span { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; opacity: .72; }
-.attendance-block { padding-top: 2px; }
+.attendance-block { padding-top: 0; }
 .attendance { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 14px; }
 .attendance div { padding: 18px 10px; border: 1px solid var(--line); background: rgba(255,255,255,.46); }
 .attendance strong { font: 600 38px/1 "Cormorant Garamond", serif; color: var(--blue-dark); }
 
 /* PAGE 4 — decorative message cards */
-.messages-section { padding-top: 60px; padding-bottom: 110px; }
+.messages-section { min-height: calc(100svh + 120px); padding-top: 48px; padding-bottom: 150px; overflow: visible; }
 .messages {
   display: grid;
   gap: 12px;
