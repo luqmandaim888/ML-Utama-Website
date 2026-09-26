@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Luqman & Nadia — Wedding Invitation</title>
+  <link rel="stylesheet" href="css/wedding.css">
+</head>
+<body>
+  <div id="app" class="app">
+    <section id="cover" class="cover" aria-label="Invitation opening">
+      <div class="landing-stage">
+        <div class="stationery-envelope" id="envelope">
+          <div class="stationery-top" aria-hidden="true"></div>
+          <div class="stationery-bottom" aria-hidden="true"></div>
+          <div class="stationery-card" aria-hidden="true">
+            <span class="card-kicker">THE WEDDING OF</span>
+            <strong>Luqman <em>&amp;</em> Nadia</strong>
+            <span>24 OCTOBER 2026</span>
+          </div>
+          <div class="stationery-flap" aria-hidden="true"></div>
+          <div class="wax-seal" aria-hidden="true">
+            <span class="seal-sprig">❧</span>
+            <span class="seal-initials">L + N</span>
+          </div>
+          <div class="paper-fold fold-horizontal" aria-hidden="true"></div>
+          <div class="paper-fold fold-vertical" aria-hidden="true"></div>
+        </div>
+        <button id="openInvitation" class="open-button">Open Invitation</button>
+      </div>
+    </section>
+
+    <main id="invitation" class="invitation hidden" aria-label="Wedding invitation">
+      <!-- PAGE 1: cover -->
+      <section class="hero section" id="page1">
+        <div class="hero-content"><p class="eyebrow">THE WEDDING OF</p>
+        <h1><span class="hero-word">Luqman</span><span class="hero-amp">&amp;</span><span class="hero-word">Nadia</span></h1>
+        <p class="date">Sunday, 20 December 2026</p>
+        <p class="intro">Under the grace of Allah S.W.T, two souls are bound in love, respect, and companionship. With joyful hearts we request your presence as we begin our journey together toward a lifetime of shared faith and happiness.</p><p class="hashtag">#Luqman4Nolly</p></div>
+      </section>
+
+      <!-- PAGE 2: Islamic invitation -->
+      <section class="section invitation-page islamic-page" id="page2">
+        <div class="page-content">
+          <div class="bismillah" lang="ar" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+          <p class="parents-label">Together with our beloved families</p>
+          <div class="parent-block">
+            <p class="parent-role">Parents of the Groom</p>
+            <p class="parent-name">Daim bin Hj. Basrun</p>
+          </div>
+          <div class="parent-block">
+            <p class="parent-role">Parents of the Bride</p>
+            <p class="parent-name">Rosdiansah bin Majid</p>
+          </div>
+          <p class="invitation-verse">
+            With humble hearts and gratitude to Allah SWT, we cordially invite you and your family to grace the wedding reception of our beloved children and share in the blessings and happiness of this special occasion.
+          </p>
+          <div class="couple-names">
+            <div>Mohamad Luqman bin Daim</div>
+            <span>&amp;</span>
+            <div>Siti Nurul Nadia binti Rosdiansah</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE 3: save the date + countdown + attendance -->
+      <section class="section page-three" id="page3">
+        <div class="page-content page-three-content">
+          <div class="save-date-block">
+            <p class="script">Save the Date</p>
+            <h2>Our Wedding Day</h2>
+            <p class="detail-date">Sunday, 20 December 2026</p>
+            <p>7:00 PM – 11:00 PM</p>
+            <p>Ming Garden Ballroom<br>Ming Garden Hotel &amp; Residences<br>Kota Kinabalu, Sabah</p>
+          </div>
+
+          <div class="countdown-block">
+            <p class="eyebrow">COUNTING DOWN</p>
+            <div class="countdown" id="countdown">
+              <div><strong id="days">--</strong><span>Days</span></div>
+              <div><strong id="hours">--</strong><span>Hours</span></div>
+              <div><strong id="minutes">--</strong><span>Minutes</span></div>
+              <div><strong id="seconds">--</strong><span>Seconds</span></div>
+            </div>
+          </div>
+
+          <div class="attendance-block">
+            <p class="eyebrow">ATTENDANCE</p>
+            <div class="attendance">
+              <div><strong id="attendingCount">0</strong><span>Attending</span></div>
+              <div><strong id="notAttendingCount">0</strong><span>Not Attending</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE 4: messages -->
+      <section class="section messages-section" id="page4">
+        <div class="page-content">
+          <p class="eyebrow">MESSAGES</p>
+          <h2>From our guests</h2>
+          <div id="messages" class="messages"></div>
+          <button class="outline-button messages-rsvp" data-modal="rsvp">RSVP</button>
+        </div>
+      </section>
+
+      <!-- PAGE 5: thank you -->
+      <section class="section closing-section" id="page5">
+        <div class="page-content">
+          <p class="script">Thank you</p>
+          <h2>For celebrating with us</h2>
+          <p>We look forward to sharing this special day with you.</p>
+        </div>
+      </section>
+    </main>
+
+    <nav id="bottomNav" class="bottom-nav hidden" aria-label="Invitation controls">
+      <button data-modal="calendar"><span class="icon">▣</span><span>Calendar</span></button>
+      <button data-modal="contact"><span class="icon">☎</span><span>Contact</span></button>
+      <button data-modal="rsvp"><span class="icon">✉</span><span>RSVP</span></button>
+      <button data-modal="location"><span class="icon">⌖</span><span>Location</span></button>
+      <button id="musicButton"><span class="icon" id="musicIcon">♫</span><span>Music</span></button>
+    </nav>
+  </div>
+
+  <div id="modalLayer" class="modal-layer hidden" aria-hidden="true">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <section class="modal" role="dialog" aria-modal="true">
+      <button id="closeModal" class="close-button" aria-label="Close">×</button>
+      <div id="modalContent"></div>
+    </section>
+  </div>
+
+  <audio id="weddingAudio" loop preload="auto">
+    <!-- Replace this source with the chosen music file or supported embed in the final build. -->
+  </audio>
+
+  <script src="js/wedding.js"></script>
+</body>
+</html>

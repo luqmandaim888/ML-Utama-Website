@@ -1,0 +1,103 @@
+{
+  "couple": {
+    "partner1": "Mohamad Luqman bin Daim",
+    "partner2": "Siti Nurul Nadia binti Rosdiansah"
+  },
+  "event": {
+    "date": "2026-12-20",
+    "start": "19:00",
+    "end": "23:00",
+    "timezone": "Asia/Kuala_Lumpur",
+    "rsvpDeadline": "2026-10-20T23:59:59+08:00"
+  },
+  "venue": {
+    "name": "Ming Garden Ballroom, Ming Garden Hotel & Residences",
+    "address": "Kota Kinabalu, Sabah",
+    "googleMaps": "https://www.google.com/maps/search/?api=1&query=Jesselton+Convention+Centre",
+    "waze": "https://www.waze.com/ul?q=Jesselton%20Convention%20Centre"
+  },
+  "contacts": [
+    {
+      "name": "Luqman",
+      "phone": "+60123456789"
+    },
+    {
+      "name": "Nadia",
+      "phone": "+60198765432"
+    }
+  ],
+  "rsvp": {
+    "enabled": true,
+    "guestOptions": [
+      1,
+      2
+    ],
+    "publicMessages": true
+  },
+  "theme": {
+    "language": "en",
+    "musicAutoplay": true
+  },
+  "sampleRsvps": [
+    {
+      "name": "Hannah Lee",
+      "attendance": "attending",
+      "guests": 2,
+      "message": "Congratulations to you both! Wishing you a lifetime of happiness."
+    },
+    {
+      "name": "Emma Tan",
+      "attendance": "attending",
+      "guests": 1,
+      "message": "Wishing you a beautiful wedding day and many happy years together."
+    },
+    {
+      "name": "Daniel Wong",
+      "attendance": "attending",
+      "guests": 2,
+      "message": "So happy for you both. See you at the wedding!"
+    },
+    {
+      "name": "Sofia Lim",
+      "attendance": "attending",
+      "guests": 1,
+      "message": "Congratulations! May your marriage be filled with love and laughter."
+    },
+    {
+      "name": "Jason Lee",
+      "attendance": "not-attending",
+      "guests": 0,
+      "message": "Sorry I can't make it, but congratulations and best wishes!"
+    },
+    {
+      "name": "Rachel Tan",
+      "attendance": "attending",
+      "guests": 2,
+      "message": "Have a wonderful celebration. Congratulations, Luqman and Nadia!"
+    },
+    {
+      "name": "Michael Chong",
+      "attendance": "attending",
+      "guests": 1,
+      "message": "Looking forward to celebrating with you both. Congratulations!"
+    },
+    {
+      "name": "Alicia Wong",
+      "attendance": "attending",
+      "guests": 2,
+      "message": "Wishing you a lifetime of love, joy and wonderful memories."
+    },
+    {
+      "name": "Kevin Ho",
+      "attendance": "not-attending",
+      "guests": 0,
+      "message": "Congratulations to both of you! Wishing you all the best."
+    },
+    {
+      "name": "Melissa Tan",
+      "attendance": "attending",
+      "guests": 1,
+      "message": "So excited for your big day. Congratulations!"
+    }
+  ]
+}
