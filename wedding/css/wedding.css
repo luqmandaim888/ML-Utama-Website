@@ -455,31 +455,3 @@ h2 { margin: 0 0 18px; font: 600 35px/1.05 "Cormorant Garamond", serif; color: v
     transition: none;
   }
 }
-
-/* iOS-safe butterfly overlay: individual PNG sprites animated with CSS/JS instead of animated WebP. */
-.butterfly-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  width: 100vw;
-  height: 100svh;
-  pointer-events: none;
-  overflow: hidden;
-}
-.butterfly {
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: block;
-  width: var(--bw);
-  height: auto;
-  opacity: var(--bo);
-  transform: translate3d(0,0,0) rotate(var(--br));
-  will-change: transform, opacity;
-  -webkit-transform: translate3d(0,0,0) rotate(var(--br));
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-@media (prefers-reduced-motion: reduce) {
-  .butterfly { animation-play-state: paused !important; }
-}
