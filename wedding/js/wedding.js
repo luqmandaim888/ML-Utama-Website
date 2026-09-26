@@ -573,3 +573,47 @@ document.getElementById("musicButton").addEventListener("click", async () => {
     icon.textContent = "♫";
   }
 });
+
+/* iOS-safe butterfly motion: animate separate transparent PNG sprites. */
+(function initButterflies(){
+  const layer = document.getElementById('butterflyLayer');
+  if (!layer) return;
+  const sprites = [1,2,3,4,5,6,7,8].map(n => `images/../sprites/butterfly-${n}.png`);
+  const paths = [
+    [-12,10, 92,24, 115,58, 106,92],
+    [112,-8, 82,22, 58,66, -14,94],
+    [6,36, 38,48, 82,74, 112,88],
+    [110,48, 78,58, 42,78, -12,88],
+    [-10,72, 28,66, 66,48, 108,30],
+    [26,108, 46,86, 76,62, 104,8],
+    [74,112, 62,88, 38,60, 6,28],
+    [52,-8, 64,28, 88,62, 112,104]
+  ];
+  const sizes=[46,38,32,42,28,36,30,34];
+  const opacities=[.66,.58,.54,.62,.48,.56,.50,.52];
+  const durations=[18,21,24,19,26,22,25,20];
+  paths.forEach((path,i)=>{
+    const img=document.createElement('img');
+    img.className='butterfly';
+    img.alt='';
+    img.src=sprites[i%sprites.length];
+    img.style.setProperty('--bw',sizes[i]+'px');
+    img.style.setProperty('--bo',opacities[i]);
+    img.style.setProperty('--br','0deg');
+    layer.appendChild(img);
+    const run=()=>{
+      const vw=window.innerWidth, vh=window.innerHeight;
+      const points=[];
+      for(let k=0;k<4;k++) points.push([path[k*2]/100*vw,path[k*2+1]/100*vh]);
+      const keyframes=[];
+      points.forEach((pt,k)=>{
+        const pct=(k/3)*100;
+        const rot=(k%2?7:-7) + Math.sin(i+k)*3;
+        keyframes.push({transform:`translate3d(${pt[0]}px,${pt[1]}px,0) rotate(${rot}deg)`,opacity:opacities[i]});
+      });
+      // Small path-dependent timing variation keeps the movement organic.
+      img.animate(keyframes,{duration:durations[i]*1000,iterations:Infinity,easing:'ease-in-out'});
+    };
+    if (img.complete) run(); else img.addEventListener('load',run,{once:true});
+  });
+})();
