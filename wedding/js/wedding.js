@@ -127,8 +127,9 @@ const invitationEl = document.getElementById("invitation");
 const bottomNav = document.getElementById("bottomNav");
 const modalLayer = document.getElementById("modalLayer");
 const modalContent = document.getElementById("modalContent");
-const youtubeMusic = document.getElementById("youtubeMusic");
+const weddingAudio = document.getElementById("weddingAudio");
 const YOUTUBE_MUSIC_URL = "https://www.youtube.com/watch?v=2ibzVUbMfpU";
+const LOCAL_MUSIC_PATH = "assets/music/wedding-music.mp3";
 let musicMuted = false;
 let musicStarted = false;
 
@@ -210,8 +211,8 @@ openInvitationButton.addEventListener("click", () => {
     openingInProgress = false;
   }, 1150);
 
-  // The Open Invitation click is the user's direct gesture, so the hidden
-  // YouTube player can begin playback here without requiring another tap.
+  // The Open Invitation click is the user's direct gesture, so the local
+  // audio file can begin playback here without requiring another tap.
   startWeddingMusic();
 });
 
@@ -562,15 +563,24 @@ function closeModal() {
 function startWeddingMusic() {
   if (musicStarted) return;
   musicStarted = true;
-  youtubeMusic.src = "https://www.youtube-nocookie.com/embed/2ibzVUbMfpU?autoplay=1&controls=0&disablekb=1&fs=0&loop=1&modestbranding=1&playsinline=1&playlist=2ibzVUbMfpU&rel=0";
+
+  // Keep playback tied directly to the Open Invitation gesture. Browsers
+  // generally allow audio started from an explicit user interaction.
+  weddingAudio.muted = musicMuted;
+  const playPromise = weddingAudio.play();
+
+  if (playPromise && typeof playPromise.catch === "function") {
+    playPromise.catch(() => {
+      // If a browser still blocks playback, allow a later explicit interaction
+      // (such as returning to the invitation) to retry without breaking the UI.
+      musicStarted = false;
+    });
+  }
 }
 
 function setMusicMute(muted) {
   musicMuted = muted;
-  const player = document.getElementById("youtubeMusic");
-  try {
-    player.contentWindow.postMessage(JSON.stringify({ event: "command", func: muted ? "mute" : "unMute", args: [] }), "*");
-  } catch (_) {}
+  weddingAudio.muted = muted;
   document.getElementById("musicIcon").textContent = muted ? "♩" : "♫";
   const button = document.getElementById("musicMuteButton");
   if (button) button.textContent = muted ? "Unmute Music" : "Mute Music";

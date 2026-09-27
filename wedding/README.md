@@ -35,3 +35,12 @@ RSVP submissions currently use browser `localStorage` only. This is development 
 
 
 Phase 6 updates: static paper warmed toward #FFFAED; guest messages are newest-first inside a scrollable viewport showing about three cards; message plaques are approximately 30% shorter.
+
+
+## Background music
+
+The invitation expects the background music at:
+
+`assets/music/wedding-music.mp3`
+
+The MP3 is intentionally not included in this ZIP. Add your MP3 using that exact filename and path. The guest's **Open Invitation** tap starts the local audio. The Music panel provides Mute/Unmute and the existing YouTube link.

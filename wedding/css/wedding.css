@@ -457,15 +457,3 @@ h2 { margin: 0 0 18px; font: 600 35px/1.05 "Cormorant Garamond", serif; color: v
   }
 }
 
-
-/* Hidden YouTube player used only as the invitation's background-audio source. */
-.youtube-music {
-  position: fixed;
-  width: 1px;
-  height: 1px;
-  left: -10px;
-  bottom: -10px;
-  opacity: 0;
-  pointer-events: none;
-  border: 0;
-}
