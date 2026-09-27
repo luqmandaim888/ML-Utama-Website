@@ -286,7 +286,7 @@ button { font: inherit; }
 .parent-block { margin: 7px 0; }
 .parent-role { margin: 0 0 3px; font-size: 9px !important; letter-spacing: .14em; text-transform: uppercase; color: var(--blue-dark) !important; }
 .parent-name { margin: 0; white-space: nowrap; font-family: "Cormorant Garamond", serif; font-size: 17px !important; font-weight: 500 !important; line-height: 1.12 !important; color: var(--ink) !important; }
-.invitation-verse { max-width: 315px; margin: 13px auto 15px; font-family: "Cormorant Garamond", serif; font-size: 16px !important; line-height: 1.55 !important; color: #4c6075 !important; }
+.invitation-verse { max-width: 315px; margin: 18px auto 18px; font-family: "Cormorant Garamond", serif; font-size: 16px !important; line-height: 1.2 !important; color: #4c6075 !important; }
 .couple-names { display: grid; gap: 1px; margin-top: 10px; font-family: "Great Vibes", cursive; font-size: clamp(34px, 8.6vw, 47px); line-height: 1.1; color: var(--blue-dark); }
 .couple-names span { font-size: .5em; margin: 3px 0; }
 
@@ -298,6 +298,8 @@ button { font: inherit; }
 h2 { margin: 0 0 18px; font: 600 35px/1.05 "Cormorant Garamond", serif; color: var(--blue-dark); }
 .section p { line-height: 1.85; font-size: 12px; color: var(--muted); }
 .detail-date { font-family: "Cormorant Garamond", serif; font-size: 23px !important; color: var(--ink) !important; }
+.save-date-block > p:nth-of-type(3),
+.save-date-block > p:nth-of-type(4) { font-size: 14px !important; font-weight: 700 !important; line-height: 1.6 !important; color: var(--ink) !important; }
 .countdown-block { padding-top: 0; }
 .countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-top: 14px; }
 .countdown div, .attendance div { display: grid; gap: 5px; }
