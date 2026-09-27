@@ -127,7 +127,10 @@ const invitationEl = document.getElementById("invitation");
 const bottomNav = document.getElementById("bottomNav");
 const modalLayer = document.getElementById("modalLayer");
 const modalContent = document.getElementById("modalContent");
-const weddingAudio = document.getElementById("weddingAudio");
+const youtubeMusic = document.getElementById("youtubeMusic");
+const YOUTUBE_MUSIC_URL = "https://www.youtube.com/watch?v=2ibzVUbMfpU";
+let musicMuted = false;
+let musicStarted = false;
 
 let autoScrollActive = false;
 let autoScrollFrame = null;
@@ -207,11 +210,9 @@ openInvitationButton.addEventListener("click", () => {
     openingInProgress = false;
   }, 1150);
 
-  // Opening is a direct user gesture, so music is allowed to start here if
-  // a real audio source is supplied later.
-  if (weddingAudio.src) {
-    weddingAudio.play().catch(() => {});
-  }
+  // The Open Invitation click is the user's direct gesture, so the hidden
+  // YouTube player can begin playback here without requiring another tap.
+  startWeddingMusic();
 });
 
 function manualTakeover() {
@@ -558,18 +559,33 @@ function closeModal() {
   modalLayer.setAttribute("aria-hidden", "true");
 }
 
-document.getElementById("musicButton").addEventListener("click", async () => {
+function startWeddingMusic() {
+  if (musicStarted) return;
+  musicStarted = true;
+  youtubeMusic.src = "https://www.youtube-nocookie.com/embed/2ibzVUbMfpU?autoplay=1&controls=0&disablekb=1&fs=0&loop=1&modestbranding=1&playsinline=1&playlist=2ibzVUbMfpU&rel=0";
+}
+
+function setMusicMute(muted) {
+  musicMuted = muted;
+  const player = document.getElementById("youtubeMusic");
+  try {
+    player.contentWindow.postMessage(JSON.stringify({ event: "command", func: muted ? "mute" : "unMute", args: [] }), "*");
+  } catch (_) {}
+  document.getElementById("musicIcon").textContent = muted ? "♩" : "♫";
+  const button = document.getElementById("musicMuteButton");
+  if (button) button.textContent = muted ? "Unmute Music" : "Mute Music";
+}
+
+document.getElementById("musicButton").addEventListener("click", () => {
   stopAutoScroll();
-  const icon = document.getElementById("musicIcon");
-  if (!weddingAudio.src) {
-    icon.textContent = "♫";
-    return;
-  }
-  if (weddingAudio.paused) {
-    await weddingAudio.play();
-    icon.textContent = "Ⅱ";
-  } else {
-    weddingAudio.pause();
-    icon.textContent = "♫";
-  }
+  modalContent.innerHTML = `
+    <h3>Music</h3>
+    <p>Background music for the invitation.</p>
+    <div class="modal-actions">
+      <button type="button" id="musicMuteButton">${musicMuted ? "Unmute Music" : "Mute Music"}</button>
+      <a href="${YOUTUBE_MUSIC_URL}" target="_blank" rel="noopener">Watch on YouTube</a>
+    </div>`;
+  modalLayer.classList.remove("hidden");
+  modalLayer.setAttribute("aria-hidden", "false");
+  document.getElementById("musicMuteButton").addEventListener("click", () => setMusicMute(!musicMuted));
 });
