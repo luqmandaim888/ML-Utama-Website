@@ -21,6 +21,25 @@ const SUPABASE_HEADERS = {
   Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
 };
 
+const supabaseRealtimeClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let rsvpRealtimeRefreshTimer = null;
+
+function setupRSVPRealtime() {
+  supabaseRealtimeClient
+    .channel("public:rsvp_counts")
+    .on("broadcast", { event: "rsvp_changed" }, () => {
+      clearTimeout(rsvpRealtimeRefreshTimer);
+      rsvpRealtimeRefreshTimer = window.setTimeout(() => {
+        renderRSVPData();
+      }, 100);
+    })
+    .subscribe(status => {
+      if (status === "SUBSCRIBED") {
+        console.log("RSVP realtime connected.");
+      }
+    });
+}
+
 async function fetchSupabase(path, options = {}) {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...options,
@@ -35,7 +54,12 @@ async function fetchSupabase(path, options = {}) {
     throw new Error(`Supabase request failed (${response.status}): ${detail}`);
   }
 
-  if (response.status === 204) return null;
+  // A successful POST using `Prefer: return=minimal` may return a 201/204
+  // response with an empty body. Do not try to parse that empty body as JSON.
+  const prefer = String((options.headers && options.headers.Prefer) || "").toLowerCase();
+  if (response.status === 204 || response.status === 205 || prefer.includes("return=minimal")) return null;
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.toLowerCase().includes("application/json")) return null;
   return response.json();
 }
 
@@ -209,6 +233,7 @@ function updateCountdown() {
 }
 updateCountdown();
 setInterval(updateCountdown, 1000);
+setupRSVPRealtime();
 
 /* Scroll-triggered content reveals.
    The invitation has a central active zone (~2/3 of the viewport). Elements
