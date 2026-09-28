@@ -14,82 +14,61 @@ const invitation = {
 };
 
 
-const sampleRSVPs = [
-  {
-    "name": "Hannah Lee",
-    "submittedAt": "2026-10-01T09:00:00+08:00",
-    "attendance": "attending",
-    "guests": 2,
-    "message": "Congratulations to you both! Wishing you a lifetime of happiness."
-  },
-  {
-    "name": "Emma Tan",
-    "submittedAt": "2026-10-02T11:30:00+08:00",
-    "attendance": "attending",
-    "guests": 1,
-    "message": "Wishing you a beautiful wedding day and many happy years together."
-  },
-  {
-    "name": "Daniel Wong",
-    "submittedAt": "2026-10-03T14:15:00+08:00",
-    "attendance": "attending",
-    "guests": 2,
-    "message": "So happy for you both. See you at the wedding!"
-  },
-  {
-    "name": "Sofia Lim",
-    "submittedAt": "2026-10-04T10:20:00+08:00",
-    "attendance": "attending",
-    "guests": 1,
-    "message": "Congratulations! May your marriage be filled with love and laughter."
-  },
-  {
-    "name": "Jason Lee",
-    "submittedAt": "2026-10-05T16:45:00+08:00",
-    "attendance": "not-attending",
-    "guests": 0,
-    "message": "Sorry I can't make it, but congratulations and best wishes!"
-  },
-  {
-    "name": "Rachel Tan",
-    "submittedAt": "2026-10-06T13:10:00+08:00",
-    "attendance": "attending",
-    "guests": 2,
-    "message": "Have a wonderful celebration. Congratulations, Luqman and Nadia!"
-  },
-  {
-    "name": "Michael Chong",
-    "submittedAt": "2026-10-07T18:00:00+08:00",
-    "attendance": "attending",
-    "guests": 1,
-    "message": "Looking forward to celebrating with you both. Congratulations!"
-  },
-  {
-    "name": "Alicia Wong",
-    "submittedAt": "2026-10-08T08:40:00+08:00",
-    "attendance": "attending",
-    "guests": 2,
-    "message": "Wishing you a lifetime of love, joy and wonderful memories."
-  },
-  {
-    "name": "Kevin Ho",
-    "submittedAt": "2026-10-09T12:25:00+08:00",
-    "attendance": "not-attending",
-    "guests": 0,
-    "message": "Congratulations to both of you! Wishing you all the best."
-  },
-  {
-    "name": "Melissa Tan",
-    "submittedAt": "2026-10-10T19:30:00+08:00",
-    "attendance": "attending",
-    "guests": 1,
-    "message": "So excited for your big day. Congratulations!"
-  }
-];
+const SUPABASE_URL = "https://vidfateucpdavhzjhndm.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Twi-90s2d_8AvVU3W4y6Sg_U0KnDpT-";
+const SUPABASE_HEADERS = {
+  apikey: SUPABASE_PUBLISHABLE_KEY,
+  Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+};
 
-function getAllRSVPs() {
-  const stored = JSON.parse(localStorage.getItem("wedding_rsvps") || "[]");
-  return [...sampleRSVPs, ...stored];
+async function fetchSupabase(path, options = {}) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      ...SUPABASE_HEADERS,
+      ...(options.headers || {})
+    }
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(`Supabase request failed (${response.status}): ${detail}`);
+  }
+
+  if (response.status === 204) return null;
+  return response.json();
+}
+
+function renderMessages(records) {
+  const messages = document.getElementById("messages");
+  messages.innerHTML = "";
+
+  records
+    .filter(r => r.message)
+    .slice()
+    .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+    .forEach(r => addMessage(r.full_name, r.message, false));
+
+  setupMessageReveals();
+}
+
+async function renderRSVPData() {
+  try {
+    const [counts, comments] = await Promise.all([
+      fetchSupabase("rsvp_counts?select=attending,not_attending"),
+      fetchSupabase("rsvp_comments?select=full_name,message,created_at&order=created_at.desc")
+    ]);
+
+    const countRow = counts && counts[0] ? counts[0] : { attending: 0, not_attending: 0 };
+    document.getElementById("attendingCount").textContent = Number(countRow.attending || 0);
+    document.getElementById("notAttendingCount").textContent = Number(countRow.not_attending || 0);
+    renderMessages(comments || []);
+  } catch (error) {
+    console.error("Unable to load RSVP data.", error);
+    document.getElementById("attendingCount").textContent = "0";
+    document.getElementById("notAttendingCount").textContent = "0";
+    renderMessages([]);
+  }
 }
 
 function addMessage(name, message, prepend = true) {
@@ -101,24 +80,6 @@ function addMessage(name, message, prepend = true) {
   } else {
     document.getElementById("messages").appendChild(el);
   }
-}
-
-function renderRSVPData() {
-  const records = getAllRSVPs();
-  const attending = records.filter(r => r.attendance === "attending").length;
-  const notAttending = records.filter(r => r.attendance === "not-attending").length;
-  document.getElementById("attendingCount").textContent = attending;
-  document.getElementById("notAttendingCount").textContent = notAttending;
-
-  const messages = document.getElementById("messages");
-  messages.innerHTML = "";
-  // Newest RSVP first. Real submissions carry submittedAt; the sample records
-  // also have timestamps so the same ordering logic is used in the pilot.
-  records
-    .filter(r => r.message)
-    .slice()
-    .sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0))
-    .forEach(r => addMessage(r.name, r.message, false));
 }
 
 const cover = document.getElementById("cover");
@@ -248,8 +209,6 @@ function updateCountdown() {
 }
 updateCountdown();
 setInterval(updateCountdown, 1000);
-
-renderRSVPData();
 
 /* Scroll-triggered content reveals.
    The invitation has a central active zone (~2/3 of the viewport). Elements
@@ -412,7 +371,7 @@ function setupMessageReveals() {
 }
 
 setupScrollReveals();
-setupMessageReveals();
+renderRSVPData();
 
 function openModal(type) {
   const deadlinePassed = Date.now() > new Date(invitation.rsvpDeadline).getTime();
@@ -454,7 +413,7 @@ function rsvpForm() {
     <form id="rsvpForm">
       <div class="form-group">
         <label for="guestName">Full Name *</label>
-        <input id="guestName" name="name" required autocomplete="name">
+        <input id="guestName" name="name" required maxlength="20" autocomplete="name">
       </div>
       <div class="form-group">
         <label>Attendance *</label>
@@ -472,7 +431,7 @@ function rsvpForm() {
       </div>
       <div class="form-group">
         <label for="message">Message (optional)</label>
-        <textarea id="message" name="message" placeholder="Leave a message for the couple"></textarea>
+        <textarea id="message" name="message" maxlength="100" placeholder="Leave a message for the couple"></textarea>
       </div>
       <button class="outline-button" type="submit">Submit RSVP</button>
     </form>`;
@@ -489,21 +448,62 @@ function bindRSVP() {
     });
   });
 
-  document.getElementById("rsvpForm").addEventListener("submit", (e) => {
+  document.getElementById("rsvpForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const record = {
-      name: String(fd.get("name")).trim(),
-      attendance,
-      guests: attendance === "attending" ? Number(fd.get("guestCount")) : 0,
-      message: String(fd.get("message") || "").trim(),
-      submittedAt: new Date().toISOString()
-    };
-    const records = JSON.parse(localStorage.getItem("wedding_rsvps") || "[]");
-    records.push(record);
-    localStorage.setItem("wedding_rsvps", JSON.stringify(records));
-    renderRSVPData();
-    modalContent.innerHTML = `<h3>Thank You</h3><p>Your RSVP has been recorded.</p>`;
+    const form = e.currentTarget;
+    const submitButton = form.querySelector('button[type="submit"]');
+    const fd = new FormData(form);
+    const fullName = String(fd.get("name") || "").trim();
+    const message = String(fd.get("message") || "").trim();
+    const guestCount = attendance === "attending" ? Number(fd.get("guestCount")) : 0;
+
+    if (!fullName) {
+      form.querySelector("#guestName").focus();
+      return;
+    }
+
+    if (fullName.length > 20 || message.length > 100) {
+      alert("Please keep your name to 20 characters and your message to 100 characters or fewer.");
+      return;
+    }
+
+    if (attendance === "attending" && ![1, 2].includes(guestCount)) {
+      alert("Please select 1 or 2 guests.");
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
+
+    try {
+      await fetchSupabase("rsvps", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Prefer: "return=minimal"
+        },
+        body: JSON.stringify({
+          full_name: fullName,
+          attendance,
+          guest_count: guestCount,
+          message: message || null
+        })
+      });
+
+      await renderRSVPData();
+      modalContent.innerHTML = `<h3>Thank You</h3><p>Your RSVP has been recorded.</p>`;
+    } catch (error) {
+      console.error("Unable to submit RSVP.", error);
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit RSVP";
+      const existingError = form.querySelector(".rsvp-error");
+      if (!existingError) {
+        const errorEl = document.createElement("p");
+        errorEl.className = "rsvp-error";
+        errorEl.textContent = "We couldn't submit your RSVP. Please check your connection and try again.";
+        form.appendChild(errorEl);
+      }
+    }
   });
 }
 

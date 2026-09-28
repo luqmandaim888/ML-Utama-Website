@@ -1,4 +1,4 @@
-# Wedding Invitation Pilot — Phase 4
+# Wedding Invitation Pilot — Phase 2 RSVP Backend
 
 Mobile-first wedding invitation prototype for the `/wedding/` path.
 
@@ -10,16 +10,21 @@ Mobile-first wedding invitation prototype for the `/wedding/` path.
 
 ## Page structure
 1. Opening / cover
-2. Islamic invitation: Bismillah, parents, invitation wording, Alex & Sarah
+2. Islamic invitation: Bismillah, parents, invitation wording, Luqman & Nadia
 3. Save the Date + countdown + attendance
 4. Guest messages + RSVP
-5. Thank You
 
 ## Scrolling
 After the visitor presses **Open Invitation**, the invitation is revealed and the slow continuous auto-scroll starts immediately. Wheel, touch, pointer-down, or scrolling keys stop auto-scroll and transfer control to the visitor.
 
-## Pilot storage
-RSVP submissions currently use browser `localStorage` only. This is development behavior; the production version should use the planned remote database.
+## RSVP backend
+RSVP submissions are connected to the Supabase project configured in `js/wedding.js`. The browser submits new records to the `public.rsvps` table through the Supabase REST API.
+
+The website reads public comments from the `public.rsvp_comments` view and attendance totals from the `public.rsvp_counts` view. The underlying RSVP table remains protected by Row Level Security.
+
+The Supabase publishable key is safe to expose in the frontend; never place a database password or secret/service-role key in this project.
+
+The site no longer uses browser `localStorage` for RSVP records.
 
 ## Supplied design references used
 - `images/landing-reference.png`
