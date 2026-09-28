@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Montserrat:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Pinyon+Script&family=Montserrat:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap");
 
 :root {
   --ink: #273b54;
@@ -137,8 +137,23 @@ button { font: inherit; }
 }
 .stationery-card::after { inset: 15px; border-style: dotted; opacity: .45; }
 .card-kicker { font-size: 8px; letter-spacing: .26em; }
-.stationery-card strong { font: 400 clamp(35px, 9vw, 55px)/1 "Great Vibes", cursive; }
-.stationery-card strong em { font-size: .52em; font-style: normal; }
+.stationery-card strong {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  font: 400 clamp(35px, 9vw, 55px)/.88 "Pinyon Script", cursive;
+  letter-spacing: -.02em;
+  -webkit-text-stroke: .44px currentColor;
+  text-shadow: .15px 0 currentColor;
+  transform: scaleX(.94) scaleY(1.06);
+}
+.stationery-card strong em {
+  display: block;
+  font: 400 .48em/.8 "Great Vibes", cursive;
+  font-style: normal;
+  margin: 2px 0 1px;
+  -webkit-text-stroke: .28px currentColor;
+}
 .stationery-card > span:last-child { font-size: 9px; letter-spacing: .17em; }
 
 .stationery-flap {
@@ -252,9 +267,10 @@ button { font: inherit; }
   overflow: hidden;
 }
 .page-content { width: min(100%, 390px); position: relative; z-index: 2; }
-.islamic-page .page-content { width: min(100%, 360px); padding: 22px 18px 24px; background: rgba(255,250,237,.72); border: 1px solid rgba(48,77,111,.08); box-shadow: 0 8px 28px rgba(28,47,69,.05); }
+.islamic-page .page-content { width: min(100%, 380px); padding: 22px 18px 24px; background: rgba(255,250,237,.72); border: 1px solid rgba(48,77,111,.08); box-shadow: 0 8px 28px rgba(28,47,69,.05); }
 .hero h1 .hero-word,
 .hero h1 .hero-amp { display: inline-block; }
+.hero h1 .hero-word { transform: scaleX(.94) scaleY(1.06); transform-origin: center; -webkit-text-stroke: .42px currentColor; text-shadow: .15px 0 currentColor; }
 .hero-content {
   width: min(100%, 355px);
   padding: 24px 20px 22px;
@@ -264,31 +280,55 @@ button { font: inherit; }
 }
 .hero h1 {
   margin: 0;
-  font-family: "Great Vibes", cursive;
+  font-family: "Pinyon Script", cursive;
   font-weight: 400;
-  font-size: clamp(66px, 17vw, 92px);
-  line-height: .95;
+  font-size: clamp(64px, 16.5vw, 88px);
+  line-height: .91;
   color: var(--blue-dark);
 }
 .eyebrow { margin: 0 0 10px; font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--blue); }
 
 .hashtag { margin: 14px 0 0; font-family: "Cormorant Garamond", serif; font-size: 15px !important; letter-spacing: .12em; color: var(--blue-dark) !important; }
 .hero h1 { display: grid; justify-items: center; gap: 0; }
-.hero h1 .hero-amp { line-height: .7; margin: 3px 0 6px; }
+.hero h1 .hero-amp {
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-size: .62em;
+  line-height: .72;
+  margin: 3px 0 6px;
+  -webkit-text-stroke: .28px currentColor;
+}
+.bride-name-script { font-family: "Pinyon Script", cursive !important; font-weight: 400 !important; font-size: 1em; letter-spacing: 0; line-height: 1.02; }
+.bride-full-name { font-family: "Pinyon Script", cursive; font-weight: 400; }
+.norkiah-name { white-space: normal; line-height: 1.05 !important; }
 
 .hero .date { margin-top: 20px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue-dark); }
 .intro { max-width: 305px; margin: 22px auto 0; line-height: 1.9; font-size: 12px; color: var(--muted); }
 
 /* PAGE 2 */
-.islamic-page { padding-top: 34px; padding-bottom: 78px; }
-.bismillah { margin-bottom: 18px; font-family: "Noto Naskh Arabic", serif; font-size: clamp(28px, 7.4vw, 42px); line-height: 1.45; color: var(--blue-dark); }
-.parents-label { margin: 0 0 9px; font-family: "Cormorant Garamond", serif; font-size: 17px; color: var(--muted); }
-.parent-block { margin: 7px 0; }
-.parent-role { margin: 0 0 3px; font-size: 9px !important; letter-spacing: .14em; text-transform: uppercase; color: var(--blue-dark) !important; }
-.parent-name { margin: 0; white-space: nowrap; font-family: "Cormorant Garamond", serif; font-size: 17px !important; font-weight: 500 !important; line-height: 1.12 !important; color: var(--ink) !important; }
-.invitation-verse { max-width: 315px; margin: 18px auto 18px; font-family: "Cormorant Garamond", serif; font-size: 16px !important; line-height: 1.2 !important; color: #4c6075 !important; }
-.couple-names { display: grid; gap: 1px; margin-top: 10px; font-family: "Great Vibes", cursive; font-size: clamp(34px, 8.6vw, 47px); line-height: 1.1; color: var(--blue-dark); }
-.couple-names span { font-size: .5em; margin: 3px 0; }
+.islamic-page { padding-top: 24px; padding-bottom: 62px; }
+.islamic-page .page-content { padding: 18px 16px 20px; }
+.bismillah { margin-bottom: 12px; font-family: "Noto Naskh Arabic", serif; font-size: clamp(27px, 7vw, 40px); line-height: 1.35; color: var(--blue-dark); }
+.parents-label { margin: 0 0 7px; font-family: "Cormorant Garamond", serif; font-size: 16px; color: var(--muted); }
+.parent-block { margin: 5px 0; }
+
+.parent-block:nth-of-type(2) {
+  margin-bottom: 15px;
+}
+.parent-role { margin: 0 0 2px; font-size: 8.5px !important; letter-spacing: .14em; text-transform: uppercase; color: var(--blue-dark) !important; }
+.parent-name { margin: 0; white-space: nowrap; font-family: "Cormorant Garamond", serif; font-size: 19px !important; font-weight: 500 !important; line-height: 1.08 !important; color: var(--ink) !important; }
+.invitation-verse { max-width: 305px; margin: 20px auto 20px; font-family: "Cormorant Garamond", serif; font-size: 15.5px !important; line-height: 1.35 !important; color: #4c6075 !important; }
+.couple-names { display: grid; gap: 0; margin-top: 30px; font-family: "Pinyon Script", cursive; font-size: clamp(34px, 8.2vw, 46px); line-height: .96; color: var(--blue-dark); }
+.couple-names > div { display: inline-block; width: 108%; margin-left: -4%; transform: scaleX(.94) scaleY(1.055); transform-origin: center; -webkit-text-stroke: .42px currentColor; text-shadow: .15px 0 currentColor; }
+.couple-names .bride-full-name { font-family: "Pinyon Script", cursive; }
+.couple-names span {
+  font-family: "Great Vibes", cursive;
+  font-size: .58em;
+  font-weight: 400;
+  line-height: .72;
+  margin: 8px 0 15px;
+  -webkit-text-stroke: .28px currentColor;
+}
 
 /* PAGE 3 */
 .page-three { padding-top: 42px; padding-bottom: 86px; }

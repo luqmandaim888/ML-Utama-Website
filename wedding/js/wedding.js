@@ -8,8 +8,8 @@ const invitation = {
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=Ming+Garden+Hotel+%26+Residences",
   wazeUrl: "https://www.waze.com/ul?q=Ming%20Garden%20Hotel%20%26%20Residences",
   contacts: [
-    { name: "Luqman", phone: "+60123456789" },
-    { name: "Nadia", phone: "+60198765432" }
+    { name: "Luqman", phone: "+60168129886" },
+    { name: "Nadia", phone: "+60136052405" }
   ]
 };
 
@@ -412,7 +412,7 @@ function openModal(type) {
       <h3>Contact</h3>
       <p>For questions about the wedding, contact us directly.</p>
       <div class="modal-actions">
-        ${invitation.contacts.map(c => `<a href="tel:${c.phone}">${c.name} — ${c.phone}</a><a href="https://wa.me/${c.phone.replace(/\\D/g,'')}" target="_blank" rel="noopener">WhatsApp ${c.name}</a>`).join("")}
+        ${invitation.contacts.map(c => `<a href="https://wa.me/${c.phone.replace(/\D/g,'')}" target="_blank" rel="noopener">${c.name} (${c.name === "Luqman" ? "WhatsApp" : "Whatsapp"})</a>`).join("")}
       </div>`,
     location: `
       <h3>Location</h3>
