@@ -4,7 +4,7 @@ const invitation = {
   endDate: "2026-12-20T23:00:00+08:00",
   venue: "Ming Garden Ballroom, Ming Garden Hotel & Residences",
   address: "Kota Kinabalu, Sabah",
-  rsvpDeadline: "2026-10-20T23:59:59+08:00",
+  rsvpDeadline: "2026-11-15T12:00:00+08:00",
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=Ming+Garden+Hotel+%26+Residences",
   wazeUrl: "https://www.waze.com/ul?q=Ming%20Garden%20Hotel%20%26%20Residences",
   contacts: [
