@@ -113,7 +113,7 @@ const bottomNav = document.getElementById("bottomNav");
 const modalLayer = document.getElementById("modalLayer");
 const modalContent = document.getElementById("modalContent");
 const weddingAudio = document.getElementById("weddingAudio");
-const YOUTUBE_MUSIC_URL = "https://www.youtube.com/watch?v=2ibzVUbMfpU";
+const YOUTUBE_MUSIC_URL = "https://www.youtube.com/watch?v=5OIeIaAhQOg";
 const LOCAL_MUSIC_PATH = "assets/music/wedding-music.mp3";
 let musicMuted = false;
 let musicStarted = false;
