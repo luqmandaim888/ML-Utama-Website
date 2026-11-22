@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Wedding Guest List — Dark Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Great+Vibes&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Wedding Guest List</title>
 <style>
 :root{
  --bg:#151a21;--panel:#202833;--panel2:#252f3b;--card:#202a35;--card2:#293542;
@@ -12,12 +15,14 @@
  --gold:#c29b56;--gold2:#59492d;--shadow:0 14px 36px #0003;
 }
 *{box-sizing:border-box}
-body{margin:0;padding:26px 16px 40px;background:radial-gradient(ellipse at 20% 0%,#263342 0%,transparent 42%),var(--bg);color:var(--text);font:14px/1.48 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+body{margin:0;padding:26px 16px 40px;background:radial-gradient(ellipse at 20% 0%,#263342 0%,transparent 42%),var(--bg);color:var(--text);font:14px/1.48 Montserrat,Arial,sans-serif}
 .app{max-width:1240px;margin:auto}
 .hero,.panel{background:linear-gradient(145deg,#222c37,#1d2630);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow)}
-.hero{padding:27px 30px;margin-bottom:16px}
-.eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#9bb5cb;font-weight:750}
-h1{font:500 clamp(28px,4vw,42px)/1.15 Georgia,serif;margin:8px 0;color:#f2f4f6}
+.hero{padding:27px 30px 24px;margin-bottom:16px;text-align:center}
+.eyebrow{font-family:Montserrat,Arial,sans-serif;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#fff;font-weight:600;margin:0 0 10px}
+h1{display:flex;align-items:baseline;justify-content:center;gap:0;font-family:"Pinyon Script",cursive;font-weight:400;font-size:clamp(40px,7.2vw,88px);line-height:.98;margin:0 0 10px;color:#fff;white-space:nowrap;text-align:center;letter-spacing:0;text-shadow:0 1px 1px #ffffff12}
+h1 .hero-word{display:inline-block;transform:scaleX(.94) scaleY(1.06);transform-origin:center;-webkit-text-stroke:.42px currentColor;text-shadow:.15px 0 currentColor}
+h1 .amp{display:inline-block;font-family:"Great Vibes",cursive;font-style:normal;font-size:.62em;font-weight:400;line-height:.9;vertical-align:.04em;margin:0 .18em;-webkit-text-stroke:.28px currentColor;text-shadow:none}
 .sub,.small{color:var(--muted)}.sub{font-size:13px}.small{font-size:11px}
 .panel{padding:17px;margin-bottom:15px}
 h2{font-size:15px;margin:0;font-weight:700}
@@ -77,12 +82,12 @@ textarea{min-height:86px;resize:vertical}
 .modal-card h3{margin:0 0 8px;font-size:16px}.modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .selection-hint{font-size:10px;color:var(--muted);margin-top:5px}
 @media(max-width:900px){.tables{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:580px){body{padding:12px 8px 28px}.hero{padding:20px}.panel{padding:12px}.tables{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.table-card{padding:8px}.stats{gap:6px}.stat{padding:8px}.stat strong{font-size:19px}.unassigned-list{grid-template-columns:1fr}.section-head{align-items:flex-start}.toolbar{align-items:stretch}.toolbar>*{flex:1}.toolbar .spacer{display:none}}
+@media(max-width:580px){body{padding:12px 8px 28px}.hero{padding:20px 14px 18px}.eyebrow{font-size:9px;letter-spacing:.16em;margin-bottom:7px}h1{font-size:clamp(34px,10vw,54px);line-height:.98}.panel{padding:12px}.tables{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.table-card{padding:8px}.stats{gap:6px}.stat{padding:8px}.stat strong{font-size:19px}.unassigned-list{grid-template-columns:1fr}.section-head{align-items:flex-start}.toolbar{align-items:stretch}.toolbar>*{flex:1}.toolbar .spacer{display:none}}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="hero"><div class="eyebrow">The Wedding Celebration</div><h1>Wedding Guest List</h1><div class="sub">Find your name and view your table allocation.</div></header>
+<header class="hero"><div class="eyebrow">The Wedding Celebration of</div><h1><span class="hero-word">Luqman</span><span class="amp">&amp;</span><span class="hero-word">Nadia</span></h1><div class="sub">Find your name and view your table allocation.</div></header>
 
 <section class="panel">
  <div class="section-head"><h2>Find Your Name</h2><span class="small">Guest directory</span></div>
