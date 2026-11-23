@@ -52,6 +52,7 @@ textarea{min-height:86px;resize:vertical}
 .tables{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
 .table-card{min-width:0;background:linear-gradient(160deg,#26323e,#202a34);border:1px solid #3b4957;border-radius:12px;padding:10px}
 .table-top{display:flex;justify-content:space-between;gap:5px;align-items:center;font-size:11px;font-weight:750}
+.table-title{display:flex;align-items:center;gap:6px;min-width:0}.table-actions{display:flex;justify-content:flex-end;margin:6px 0 2px}.table-actions .btn{padding:5px 7px;font-size:9px}.pick-wrap{display:inline-flex;align-items:center;justify-content:center;min-width:20px;min-height:22px;cursor:pointer}.pick-wrap input{width:15px;height:15px;margin:0;cursor:pointer}.directory-label{display:inline-flex;align-items:center;gap:7px}.directory-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#8793a0;box-shadow:0 0 0 3px #8793a022}.directory-dot.success{background:#55c58a;box-shadow:0 0 0 3px #55c58a22}.directory-dot.error{background:#e36b72;box-shadow:0 0 0 3px #e36b7222}.directory-dot.loading{background:#c7a45c;box-shadow:0 0 0 3px #c7a45c22}
 .seat-num{font-size:10px;color:#aab8c5;white-space:nowrap}
 .bar{height:5px;border-radius:8px;background:#3c4854;margin:7px 0 5px;overflow:hidden}
 .fill{height:100%;background:#7299b9;border-radius:8px}.fill.full{background:#c16c6f}
@@ -90,9 +91,8 @@ textarea{min-height:86px;resize:vertical}
 <header class="hero"><div class="eyebrow">The Wedding Celebration of</div><h1><span class="hero-word">Luqman</span><span class="amp">&amp;</span><span class="hero-word">Nadia</span></h1><div class="sub">Find your name and view your table allocation.</div></header>
 
 <section class="panel">
- <div class="section-head"><h2>Find Your Name</h2><span class="small">Guest directory</span></div>
+ <div class="section-head"><h2>Find Your Name</h2><span class="small directory-label">Guest directory <span id="directoryStatusDot" class="directory-dot loading" role="status" aria-label="Loading guest directory" title="Loading guest directory"></span></span></div>
  <input id="search" placeholder="Search guest name…" autocomplete="off">
- <div id="directoryLoadStatus" class="statusline" style="margin-top:8px">Loading guest directory…</div>
  <div id="summaryStats" class="stats">
   <div class="stat"><strong id="totalPeople">0</strong><span>Total people</span></div>
   <div class="stat"><strong id="totalSeats">0</strong><span>Seats occupied</span></div>
@@ -187,6 +187,13 @@ const supabaseClient = window.supabase.createClient(
 );
 let supabaseSession = null;
 let databaseReady = false;
+function setDirectoryStatus(state, message){
+ const dot=document.getElementById('directoryStatusDot');
+ if(!dot)return;
+ dot.className='directory-dot '+state;
+ const label=message||(state==='success'?'Guest directory loaded':state==='error'?'Unable to load guest directory':'Loading guest directory');
+ dot.setAttribute('aria-label',label);dot.title=label;
+}
 
 async function loadGuestList(){
  const { data, error } = await supabaseClient
@@ -202,6 +209,7 @@ async function loadGuestList(){
  committed=structuredClone(guests);
  nextId=1; nextParty=guests.length+1;
  databaseReady=true;
+ setDirectoryStatus('success','Guest directory loaded successfully');
  refresh();
 }
 
@@ -274,7 +282,7 @@ function unassignedSelectedCount(){return guests.filter(g=>g.t===null&&selected.
 function guestHTML(g){
  const admin=isEditing();
  return `<div class="guest">
-  <div>${admin?`<input aria-label="Select ${esc(g.name)}" type="checkbox" class="pick" data-id="${g.id}" ${selected.has(g.id)?'checked':''}>`:''}</div>
+  <div>${admin?`<label class="pick-wrap" title="Select ${esc(g.name)}"><input aria-label="Select ${esc(g.name)}" type="checkbox" class="pick" data-id="${g.id}" ${selected.has(g.id)?'checked':''}></label>`:''}</div>
   <div class="guest-main">
    <div class="guest-name">${esc(g.name)}</div>${tagHTML(g)}
    ${admin&&showRemarks?`<div class="guest-tools"><label><input type="checkbox" class="seat-toggle" data-id="${g.id}" ${g.seat?'checked':''}> Seat required</label><input type="text" class="remark-input" data-id="${g.id}" value="${esc(g.r)}" placeholder="Remarks"></div>`:''}
@@ -291,11 +299,14 @@ function render(){
 
  $('tables').innerHTML=tables.map(n=>{
   const arr=guests.filter(g=>g.t===n&&matches(g));
+  const tableGuests=guests.filter(g=>g.t===n&&matches(g));
+  const allTableSelected=tableGuests.length>0&&tableGuests.every(g=>selected.has(g.id));
   return `<div class="table-card">
-   <div class="table-top"><span>Table ${String(n).padStart(2,'0')}</span><span class="seat-num">${seatCount(n)}/10 seats</span></div>
+   <div class="table-top"><span class="table-title">Table ${String(n).padStart(2,'0')}${n===1?'<span class="tag vip">VIP</span>':''}</span><span class="seat-num">${seatCount(n)}/10 seats</span></div>
    ${adminView?`<div class="bar"><div class="fill ${seatCount(n)>=10?'full':''}" style="width:${Math.min(100,seatCount(n)*10)}%"></div></div>`:''}
    <div class="people-count">${peopleCount(n)} guests</div>
-   ${arr.map(guestHTML).join('')||'<div class="small">No matching guests</div>'}
+   ${editing?`<div class="table-actions"><button type="button" class="btn secondary table-select-all" data-table="${n}" ${tableGuests.length===0?'disabled':''}>${allTableSelected?'Deselect All':'Select All'}</button></div>`:''}
+   ${tableGuests.map(guestHTML).join('')||'<div class="small">No matching guests</div>'}
   </div>`;
  }).join('');
 
@@ -338,7 +349,14 @@ function bindGuestEvents(){
  if(!isEditing())return;
  document.querySelectorAll('.pick').forEach(el=>el.onchange=()=>{
   const id=String(el.dataset.id);if(el.checked)selected.add(id);else selected.delete(id);
-  render();bindGuestEvents();
+  refresh();
+ });
+ document.querySelectorAll('.table-select-all').forEach(button=>button.onclick=()=>{
+  const tableNo=Number(button.dataset.table);
+  const rows=guests.filter(g=>g.t===tableNo&&matches(g));
+  const all=rows.length>0&&rows.every(g=>selected.has(g.id));
+  rows.forEach(g=>all?selected.delete(g.id):selected.add(g.id));
+  refresh();
  });
  document.querySelectorAll('.seat-toggle').forEach(el=>el.onchange=()=>{
   const g=guests.find(x=>String(x.id)===String(el.dataset.id));if(!g)return;
@@ -510,13 +528,13 @@ $('discardChangesBtn').onclick=()=>{
  $('cancelDiscard').onclick=()=>$('modalRoot').innerHTML='';
 };
 // Load the saved guest directory on every page visit or browser refresh.
+setDirectoryStatus('loading','Loading guest directory');
 (async()=>{
- const status=$('directoryLoadStatus');
  try{
   await loadGuestList();
  }catch(error){
   console.error('Unable to load guest directory:',error);
-  if(status) status.textContent='Unable to load guest directory: '+(error.message||'Please refresh and try again.');
+  setDirectoryStatus('error','Unable to load guest directory: '+(error.message||'Please refresh and try again.'));
  }
 })();
 refresh();
