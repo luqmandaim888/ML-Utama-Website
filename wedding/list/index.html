@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Great+Vibes&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<title>Wedding Guest List</title>
+<title>Luqman & Nadia - Guest List</title>
 <style>
 :root{
  --bg:#151a21;--panel:#202833;--panel2:#252f3b;--card:#202a35;--card2:#293542;
@@ -82,8 +82,41 @@ textarea{min-height:86px;resize:vertical}
 .modal-card{background:#222d38;border:1px solid #536170;border-radius:15px;padding:20px;max-width:560px;width:100%;max-height:85vh;overflow:auto;box-shadow:0 24px 70px #0008}
 .modal-card h3{margin:0 0 8px;font-size:16px}.modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .selection-hint{font-size:10px;color:var(--muted);margin-top:5px}
+#printRoot{display:none}
 @media(max-width:900px){.tables{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:580px){body{padding:12px 8px 28px}.hero{padding:20px 14px 18px}.eyebrow{font-size:9px;letter-spacing:.16em;margin-bottom:7px}h1{font-size:clamp(34px,10vw,54px);line-height:.98}.panel{padding:12px}.tables{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.table-card{padding:8px}.stats{gap:6px}.stat{padding:8px}.stat strong{font-size:19px}.unassigned-list{grid-template-columns:1fr}.section-head{align-items:flex-start}.toolbar{align-items:stretch}.toolbar>*{flex:1}.toolbar .spacer{display:none}}
+@media print{
+ @page{size:A4 landscape;margin:0}
+ html,body{width:297mm!important;height:auto!important;margin:0!important;padding:0!important;background:#fff!important;color:#17212b!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ body>*:not(#printRoot){display:none!important}
+ #printRoot,#printRoot *{visibility:visible}
+ #printRoot{display:block!important;position:static!important;width:297mm!important;margin:0!important;padding:0!important;color:#17212b;font:9px/1.3 Montserrat,Arial,sans-serif}
+ .print-page{display:block!important;width:297mm;height:210mm;min-height:210mm;max-height:210mm;overflow:hidden;box-sizing:border-box;page-break-after:always;break-after:page;background:#fff;padding:9mm}
+ .print-page:last-child{page-break-after:auto;break-after:auto}
+ .print-hero{text-align:center;border:1px solid #cbd3db;border-radius:8px;padding:5mm 4mm 3mm;margin-bottom:3mm;background:#f8fafc}
+ .print-hero .hero{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important}
+ .print-hero .eyebrow{font-size:8px;letter-spacing:.2em;color:#596777;margin:0 0 2mm}
+ .print-hero h1{font:40px/1 "Pinyon Script",cursive;color:#17212b;margin:0 0 1mm;text-shadow:none}
+ .print-hero .amp{font: .62em "Great Vibes",cursive;margin:0 .15em}
+ .print-hero .sub{font-size:8px;color:#596777}
+ .print-find{display:flex;align-items:center;justify-content:space-between;border:1px solid #cbd3db;border-radius:7px;padding:2.5mm 3mm;margin-bottom:3mm;background:#fff}
+ .print-find h2,.print-heading{font-size:10px;font-weight:700;margin:0;color:#17212b}
+ .print-find .directory-label{font-size:8px;color:#596777}
+ .print-search{border:1px solid #cbd3db;border-radius:5px;padding:1.5mm 3mm;color:#6b7785;width:55%;font-size:8px}
+ .print-arrangement-head{display:flex;justify-content:space-between;align-items:center;margin:0 0 2mm}
+ .print-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2.2mm}
+ .print-grid .table-card{background:#f8fafc!important;border:1px solid #c7d0d9!important;border-radius:5px;padding:2mm;box-shadow:none;break-inside:avoid;min-width:0}
+ .print-grid .table-top{font-size:8px;color:#17212b}
+ .print-grid .table-title{color:#17212b}
+ .print-grid .seat-num,.print-grid .people-count{font-size:7px;color:#536171}
+ .print-grid .guest{border-top:1px solid #dce2e8;padding:1.2mm 0 .8mm;gap:1mm}
+ .print-grid .guest-name{font-size:7.2px;line-height:1.2;color:#17212b;font-weight:600;overflow-wrap:anywhere}
+ .print-grid .tags{margin-top:.5mm;gap:1mm}
+ .print-grid .tag{font-size:6px;padding:.3mm 1.2mm}
+ .print-grid .tag.vip{background:#dce9f5!important;color:#23486b!important}
+ .print-grid .bar,.print-grid .table-actions,.print-grid .guest-tools,.print-grid .pick-wrap,.print-grid .tag.new,.print-grid .tag.child,.print-grid .tag.elderly,.print-grid .tag.duplicate{display:none!important}
+ .print-page-title{font-size:9px;color:#647181;text-align:right;margin:0 0 2mm}
+}
 </style>
 </head>
 <body>
@@ -158,6 +191,7 @@ textarea{min-height:86px;resize:vertical}
   </div>
   <div class="subpanel">
    <h3>Administrator Access</h3>
+   <div class="toolbar" style="margin:8px 0"><button id="exportPdf" class="btn secondary" type="button">Export PDF</button></div>
    <p id="adminAccessDescription" class="small">Exiting to View Changes will not permanently save changes, please proceed to "Save &amp; Exit".</p>
    <div id="editingAccessButtons" class="toolbar">
     <button id="saveExit" class="btn save">View Changes</button>
@@ -174,6 +208,7 @@ textarea{min-height:86px;resize:vertical}
 <div class="footer">Connected to Supabase · View Changes is a review step; Save & Exit commits your changes.</div>
 </div>
 <div id="modalRoot"></div>
+<div id="printRoot" aria-hidden="true"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -303,7 +338,7 @@ function render(){
   const tableGuests=guests.filter(g=>g.t===n&&matches(g));
   const allTableSelected=tableGuests.length>0&&tableGuests.every(g=>selected.has(idKey(g)));
   return `<div class="table-card">
-   <div class="table-top"><span class="table-title">Table ${String(n).padStart(2,'0')}${n===1?'<span class="tag vip">VIP</span>':''}</span><span class="seat-num">${seatCount(n)}/10 seats</span></div>
+   <div class="table-top"><span class="table-title">Table ${String(n).padStart(2,'0')}</span><span class="seat-num">${seatCount(n)}/10 seats</span></div>
    ${adminView?`<div class="bar"><div class="fill ${seatCount(n)>=10?'full':''}" style="width:${Math.min(100,seatCount(n)*10)}%"></div></div>`:''}
    <div class="people-count">${peopleCount(n)} guests</div>
    ${editing?`<div class="table-actions"><button type="button" class="btn secondary table-select-all" data-table="${n}" ${tableGuests.length===0?'disabled':''}>${allTableSelected?'Deselect All':'Select All'}</button></div>`:''}
@@ -329,20 +364,23 @@ function render(){
  $('savedAccessButtons').classList.toggle('hidden',viewState!=='savedAdmin');
  $('adminAccessDescription').textContent=editing?'Exiting to View Changes will not permanently save changes, please proceed to "Save & Exit".':'You can return to editing or exit Administrator Mode.';
  $('editArea').classList.toggle('hidden',!adminView);
+ $('exportPdf').classList.toggle('hidden',!adminView);
  $('loginArea').classList.toggle('hidden',adminView);
  $('adminPanel').querySelector('.section-head .small').textContent=adminView?(editing?'Editing Mode · Unlocked':'Saved Admin View'):'Administrator access';
 
  const dest=$('destination');
- const previous=Number(dest.value)||1;
+ const previous=dest.value||'1';
  const incoming=n=>selectedGuests().filter(g=>g.t!==n&&g.seat).length;
  dest.innerHTML=tables.map(n=>{
   const current=seatCount(n);
   const projected=current+incoming(n);
   const full=current>=10;
-  return `<option value="${n}" ${n===previous?'selected':''} ${projected>10?'disabled':''}>Table ${String(n).padStart(2,'0')} · ${String(current).padStart(2,'0')}/10${full?' · FULL':''}</option>`;
- }).join('');
+  return `<option value="${n}" ${String(n)===String(previous)?'selected':''} ${projected>10?'disabled':''}>Table ${String(n).padStart(2,'0')} · ${String(current).padStart(2,'0')}/10${full?' · FULL':''}</option>`;
+ }).join('')+`<option value="unassigned" ${dest.value==='unassigned'?'selected':''}>Unassigned</option>`;
+ const destinationIsUnassigned=dest.value==='unassigned';
  $('selectionInfo').textContent=selected.size?`${selected.size} guest entries selected across ${new Set(selectedGuests().map(g=>g.party)).size} party/group(s).`:'No guests selected.';
- $('move').disabled=!selected.size||seatCount(Number(dest.value))+incoming(Number(dest.value))>10;
+ $('move').textContent=destinationIsUnassigned?'Move Selected to Unassigned':'Move Selected to Table';
+ $('move').disabled=!selected.size||(!destinationIsUnassigned&&seatCount(Number(dest.value))+incoming(Number(dest.value))>10);
  $('delete').disabled=!selected.size;
  updateStatus();
 }
@@ -386,6 +424,35 @@ function bindGuestEvents(){
   else if(tagsNode)tagsNode.remove();
  });
 }
+function cleanPrintClone(node){
+ const clone=node.cloneNode(true);
+ clone.querySelectorAll('.table-actions,.guest-tools,.pick-wrap,.bar,.tag.new,.tag.child,.tag.elderly,.tag.duplicate').forEach(el=>el.remove());
+ return clone;
+}
+function exportGuestListPDF(){
+ const root=$('printRoot');root.innerHTML='';
+ const previousSearch=$('search').value;$('search').value='';render();
+ const cards=Array.from($('tables').querySelectorAll('.table-card'));
+ const hero=cleanPrintClone(document.querySelector('.hero'));
+ const page1=document.createElement('section');page1.className='print-page';
+ const heroWrap=document.createElement('div');heroWrap.className='print-hero';heroWrap.append(hero);
+ const head1=document.createElement('div');head1.className='print-arrangement-head';
+ const title1=document.createElement('h2');title1.className='print-heading';title1.textContent='Table Arrangement';
+ const count1=document.createElement('span');count1.textContent='21 Tables';head1.append(title1,count1);
+ const grid1=document.createElement('div');grid1.className='print-grid';
+ cards.slice(0,10).forEach(card=>grid1.append(cleanPrintClone(card)));
+ page1.append(heroWrap,head1,grid1);
+ const page2=document.createElement('section');page2.className='print-page';
+ const head2=document.createElement('div');head2.className='print-page-title';head2.textContent='Table Arrangement · Continued';
+ const grid2=document.createElement('div');grid2.className='print-grid';
+ cards.slice(10).forEach(card=>grid2.append(cleanPrintClone(card)));
+ page2.append(head2,grid2);
+ root.append(page1,page2);
+ $('search').value=previousSearch;render();bindGuestEvents();
+ window.print();
+}
+$('exportPdf').addEventListener('click',exportGuestListPDF);
+window.addEventListener('afterprint',()=>{$('printRoot').innerHTML=''});
 function refresh(){render();bindGuestEvents()}
 function modal(title,body,buttons){
  $('modalRoot').innerHTML=`<div class="modal"><div class="modal-card"><h3>${title}</h3>${body}<div class="modal-actions">${buttons}</div></div></div>`;
@@ -443,11 +510,17 @@ function renderPreview(){
  $('cancelPreview').onclick=()=>{previewRows=[];box.classList.add('hidden')};
 }
 function moveSelected(){
- const n=Number($('destination').value);
- const incoming=selectedGuests().filter(g=>g.t!==n&&g.seat).length;
- if(seatCount(n)+incoming>10){$('moveStatus').textContent='This table does not have enough available seats.';$('moveStatus').className='statusline error';return}
+ const destination=$('destination').value;
+ const toUnassigned=destination==='unassigned';
+ const n=toUnassigned?null:Number(destination);
+ if(!toUnassigned){
+  const incoming=selectedGuests().filter(g=>g.t!==n&&g.seat).length;
+  if(seatCount(n)+incoming>10){$('moveStatus').textContent='This table does not have enough available seats.';$('moveStatus').className='statusline error';return}
+ }
  guests.forEach(g=>{if(selected.has(idKey(g)))g.t=n});
- selected.clear();markDirty();$('moveStatus').textContent='Selected guests moved successfully. Changes remain in this session.';$('moveStatus').className='statusline';
+ selected.clear();markDirty();
+ $('moveStatus').textContent=toUnassigned?'Selected guests moved to Unassigned Guests. Changes remain in this session.':'Selected guests moved successfully. Changes remain in this session.';
+ $('moveStatus').className='statusline';
  refresh();
 }
 function deleteSelected(allPartyMembers){
