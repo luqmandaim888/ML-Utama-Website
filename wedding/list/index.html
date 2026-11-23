@@ -92,6 +92,7 @@ textarea{min-height:86px;resize:vertical}
 <section class="panel">
  <div class="section-head"><h2>Find Your Name</h2><span class="small">Guest directory</span></div>
  <input id="search" placeholder="Search guest name…" autocomplete="off">
+ <div id="directoryLoadStatus" class="statusline" style="margin-top:8px">Loading guest directory…</div>
  <div id="summaryStats" class="stats">
   <div class="stat"><strong id="totalPeople">0</strong><span>Total people</span></div>
   <div class="stat"><strong id="totalSeats">0</strong><span>Seats occupied</span></div>
@@ -508,6 +509,16 @@ $('discardChangesBtn').onclick=()=>{
  };
  $('cancelDiscard').onclick=()=>$('modalRoot').innerHTML='';
 };
+// Load the saved guest directory on every page visit or browser refresh.
+(async()=>{
+ const status=$('directoryLoadStatus');
+ try{
+  await loadGuestList();
+ }catch(error){
+  console.error('Unable to load guest directory:',error);
+  if(status) status.textContent='Unable to load guest directory: '+(error.message||'Please refresh and try again.');
+ }
+})();
 refresh();
 </script>
 </body>
