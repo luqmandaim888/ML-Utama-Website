@@ -170,30 +170,57 @@ textarea{min-height:86px;resize:vertical}
   </div>
  </div>
 </section>
-<div class="footer">Local interactive prototype · View Changes is a review step; Save & Exit simulates a commit. Supabase is not connected.</div>
+<div class="footer">Connected to Supabase · View Changes is a review step; Save & Exit commits your changes.</div>
 </div>
 <div id="modalRoot"></div>
 
 <script>
-const initial=[
-{id:1,name:"Hassan bin Ahmad",t:1,type:"Adult",seat:true,r:"",party:"p1"},
-{id:2,name:"Hassan (+1)",t:1,type:"Adult",seat:true,r:"",party:"p1"},
-{id:3,name:"Hassan (Child 1)",t:1,type:"Child",seat:false,r:"",party:"p1"},
-{id:4,name:"Siti Aminah",t:1,type:"Adult",seat:true,r:"Elderly",party:"p2"},
-{id:5,name:"Sarah Lim",t:2,type:"Adult",seat:true,r:"VIP",party:"p3"},
-{id:6,name:"Ahmad bin Ali",t:2,type:"Adult",seat:true,r:"Nenek tua",party:"p4"},
-{id:7,name:"Nurul Huda",t:2,type:"Adult",seat:true,r:"",party:"p5"},
-{id:8,name:"Farid Musa",t:3,type:"Adult",seat:true,r:"",party:"p6"},
-{id:9,name:"Farid (Child 1)",t:3,type:"Child",seat:false,r:"",party:"p6"},
-{id:10,name:"Aina Yusuf",t:3,type:"Adult",seat:true,r:"Wheelchair access",party:"p7"},
-{id:11,name:"Michelle Lim",t:3,type:"Adult",seat:true,r:"Child",party:"p8"},
-{id:12,name:"Ravi Kumar",t:4,type:"Adult",seat:true,r:"",party:"p9"},
-{id:13,name:"Priya Kumar",t:4,type:"Adult",seat:true,r:"VIP",party:"p10"},
-{id:14,name:"Daniel Wong",t:null,type:"Adult",seat:true,r:"",party:"p11"},
-{id:15,name:"Aisyah Robert",t:null,type:"Adult",seat:true,r:"",party:"p12"}
-];
-let guests=structuredClone(initial), committed=structuredClone(initial);
-let selected=new Set(), newIds=new Set(), nextId=16, nextParty=13;
+const SUPABASE_URL = "https://vidfateucpdavhzjhndm.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Twi-90s2d_8AvVU3W4y6Sg_U0KnDpT-";
+const ADMIN_EMAIL = "director@mlutama.com";
+const supabaseClient = window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_PUBLISHABLE_KEY,
+ { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
+);
+let supabaseSession = null;
+let databaseReady = false;
+
+async function loadGuestList(){
+ const { data, error } = await supabaseClient
+  .from('wedding_guests')
+  .select('id,full_name,table_id,guest_type,requires_seat,remarks,party_key')
+  .order('created_at', { ascending: true });
+ if(error) throw error;
+ guests=(data||[]).map(row=>({
+  id:String(row.id), name:row.full_name, t:row.table_id===null?null:Number(row.table_id),
+  type:row.guest_type||'Adult', seat:row.requires_seat!==false, r:row.remarks||'',
+  party:row.party_key||('party-'+row.id)
+ }));
+ committed=structuredClone(guests);
+ nextId=1; nextParty=guests.length+1;
+ databaseReady=true;
+ refresh();
+}
+
+async function saveGuestList(){
+ const payload=guests.map(g=>({
+  full_name:g.name,
+  table_id:g.t===null?null:g.t,
+  guest_type:g.type,
+  requires_seat:!!g.seat,
+  remarks:g.r||'',
+  party_key:g.party||null
+ }));
+ const { data, error } = await supabaseClient.rpc('save_wedding_guest_list',{p_guests:payload});
+ if(error) throw error;
+ await loadGuestList();
+ return data;
+}
+
+const initial=[];
+let guests=[], committed=[];
+let selected=new Set(), newIds=new Set(), nextId=1, nextParty=1;
 let dirty=false, showRemarks=false, remarkDirty=false, previewRows=[], pendingRows=[], dupNames=[];
 const $=id=>document.getElementById(id), tables=Array.from({length:21},(_,i)=>i+1);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -308,16 +335,16 @@ function render(){
 function bindGuestEvents(){
  if(!isEditing())return;
  document.querySelectorAll('.pick').forEach(el=>el.onchange=()=>{
-  const id=Number(el.dataset.id);if(el.checked)selected.add(id);else selected.delete(id);
+  const id=String(el.dataset.id);if(el.checked)selected.add(id);else selected.delete(id);
   render();bindGuestEvents();
  });
  document.querySelectorAll('.seat-toggle').forEach(el=>el.onchange=()=>{
-  const g=guests.find(x=>x.id===Number(el.dataset.id));if(!g)return;
+  const g=guests.find(x=>String(x.id)===String(el.dataset.id));if(!g)return;
   g.seat=el.checked;remarkDirty=true;markDirty();render();bindGuestEvents();
  });
  // Do not re-render the list while typing: preserve the active input and every character.
  document.querySelectorAll('.remark-input').forEach(el=>el.oninput=()=>{
-  const g=guests.find(x=>x.id===Number(el.dataset.id));if(!g)return;
+  const g=guests.find(x=>String(x.id)===String(el.dataset.id));if(!g)return;
   g.r=el.value;remarkDirty=true;markDirty();
   $('remarksButton').textContent='Save Seat Remarks';$('remarksButton').className='btn save';
   const guestNode=el.closest('.guest-main');
@@ -377,9 +404,9 @@ function renderPreview(){
  box.innerHTML=`<h3 style="font-size:13px;margin:0 0 5px">Generated Guest Preview</h3><div class="small">Edit names, classification and seat requirements. Children default to no seat in preview.</div>`+
  previewRows.map(g=>`<div class="preview-row"><input class="prev-name" data-id="${g.id}" value="${esc(g.name)}"><div class="toolbar" style="margin-top:7px"><select class="prev-type" data-id="${g.id}" style="max-width:130px"><option value="Adult" ${g.type==='Adult'?'selected':''}>Adult</option><option value="Child" ${g.type==='Child'?'selected':''}>Child</option></select><label class="small"><input type="checkbox" class="prev-seat" data-id="${g.id}" ${g.seat?'checked':''}> Requires seat</label></div></div>`).join('')+
  `<div class="toolbar"><button class="btn save" id="savePreview">Save Preview to Unassigned Guests</button><button class="btn secondary" id="cancelPreview">Cancel Preview</button></div>`;
- box.querySelectorAll('.prev-name').forEach(el=>el.oninput=()=>{const g=previewRows.find(x=>x.id===Number(el.dataset.id));if(g)g.name=el.value});
- box.querySelectorAll('.prev-type').forEach(el=>el.onchange=()=>{const g=previewRows.find(x=>x.id===Number(el.dataset.id));if(g)g.type=el.value});
- box.querySelectorAll('.prev-seat').forEach(el=>el.onchange=()=>{const g=previewRows.find(x=>x.id===Number(el.dataset.id));if(g)g.seat=el.checked});
+ box.querySelectorAll('.prev-name').forEach(el=>el.oninput=()=>{const g=previewRows.find(x=>String(x.id)===String(el.dataset.id));if(g)g.name=el.value});
+ box.querySelectorAll('.prev-type').forEach(el=>el.onchange=()=>{const g=previewRows.find(x=>String(x.id)===String(el.dataset.id));if(g)g.type=el.value});
+ box.querySelectorAll('.prev-seat').forEach(el=>el.onchange=()=>{const g=previewRows.find(x=>String(x.id)===String(el.dataset.id));if(g)g.seat=el.checked});
  $('savePreview').onclick=()=>showDuplicateConfirmation(previewRows);
  $('cancelPreview').onclick=()=>{previewRows=[];box.classList.add('hidden')};
 }
@@ -397,11 +424,20 @@ function deleteSelected(allPartyMembers){
  selected.clear();markDirty();$('moveStatus').textContent=allPartyMembers?'Selected parties deleted from this editing session.':'Selected guest entries deleted from this editing session.';
  $('moveStatus').className='statusline';$('modalRoot').innerHTML='';refresh();
 }
-function login(){
- if($('password').value==='demo123'){
+async function login(){
+ const password=$('password').value;
+ if(!password){$('loginError').textContent='Enter your administrator password.';return}
+ $('login').disabled=true;$('login').textContent='Signing in...';
+ try{
+  const {data,error}=await supabaseClient.auth.signInWithPassword({email:ADMIN_EMAIL,password});
+  if(error) throw error;
+  supabaseSession=data.session;
   viewState='editing';$('password').value='';$('loginError').textContent='';
   refresh();
- }else $('loginError').textContent='Incorrect password. Please try again.';
+ }catch(error){
+  console.error('Administrator login failed:',error);
+  $('loginError').textContent='Incorrect password or unable to sign in. Please try again.';
+ }finally{$('login').disabled=false;$('login').textContent='Access Administrator Privileges'}
 }
 $('login').onclick=login;$('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 $('search').oninput=refresh;
@@ -444,12 +480,20 @@ $('returnToEditing').onclick=()=>{
 };
 // In this standalone prototype, Save & Exit simulates a successful database commit.
 // The production implementation must replace this local assignment with one atomic Supabase transaction.
-$('saveAndExit').onclick=()=>{
- committed=structuredClone(guests);
- dirty=false;remarkDirty=false;newIds.clear();selected.clear();showRemarks=false;
- viewState='public';
- $('commitStatus').textContent='';
- refresh();
+$('saveAndExit').onclick=async()=>{
+ const button=$('saveAndExit');
+ button.disabled=true;button.textContent='Saving...';
+ try{
+  await saveGuestList();
+  dirty=false;remarkDirty=false;newIds.clear();selected.clear();showRemarks=false;
+  viewState='public';$('commitStatus').textContent='';
+  await supabaseClient.auth.signOut();supabaseSession=null;
+  refresh();
+ }catch(error){
+  console.error('Unable to save guest list:',error);
+  $('commitStatus').textContent='Save failed: '+(error.message||'Please try again.');
+  $('commitStatus').className='statusline error';
+ }finally{button.disabled=false;button.textContent='Save & Exit'}
 };
 // Discard all staged changes since the last committed version.
 $('discardChangesBtn').onclick=()=>{
@@ -458,7 +502,8 @@ $('discardChangesBtn').onclick=()=>{
  $('confirmDiscard').onclick=()=>{
   guests=structuredClone(committed);dirty=false;remarkDirty=false;newIds.clear();selected.clear();showRemarks=false;
   viewState='public';$('modalRoot').innerHTML='';
-  refresh();
+  supabaseClient.auth.signOut().then(()=>{supabaseSession=null;refresh()});
+
  };
  $('cancelDiscard').onclick=()=>$('modalRoot').innerHTML='';
 };
