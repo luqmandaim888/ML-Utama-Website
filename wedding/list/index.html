@@ -68,7 +68,7 @@ textarea{min-height:86px;resize:vertical}
 .tag.duplicate{background:#59452a;color:#f2d49b}
 .guest-tools{display:grid;gap:5px;margin:6px 0 1px 2px}
 .guest-tools label{font-size:10px;color:#c0cad3;display:flex;align-items:center;gap:6px}
-.guest-tools input[type=text]{font-size:11px;padding:6px 7px}
+.guest-tools input[type=text]{font-size:11px;padding:6px 7px}.guest-tools .name-input{font-weight:600}
 .unassigned-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .unassigned-item{min-width:0;border:1px solid #3a4856;border-radius:10px;padding:9px;background:#202b36}
 .unassigned-item .guest{border:0;padding:0}
@@ -250,7 +250,8 @@ function formatName(value){
 const seatCount=n=>guests.filter(g=>g.t===n&&g.seat).length;
 const peopleCount=n=>guests.filter(g=>g.t===n).length;
 const unassigned=()=>guests.filter(g=>g.t===null);
-const selectedGuests=()=>guests.filter(g=>selected.has(g.id));
+const idKey=g=>String(g.id);
+const selectedGuests=()=>guests.filter(g=>selected.has(idKey(g)));
 const totalSeats=()=>guests.filter(g=>g.seat).length;
 const tags=g=>{
  const r=(g.r||'').toLowerCase();
@@ -277,15 +278,15 @@ function updateStatus(){
  if(el){el.textContent=dirty?'Unsaved session changes':'No pending changes';el.className='status '+(dirty?'':'clean')}
 }
 function markDirty(){dirty=true;updateStatus();$('commitStatus').textContent=''}
-function tableSelectedCount(){return guests.filter(g=>g.t!==null&&selected.has(g.id)).length}
-function unassignedSelectedCount(){return guests.filter(g=>g.t===null&&selected.has(g.id)).length}
+function tableSelectedCount(){return guests.filter(g=>g.t!==null&&selected.has(idKey(g))).length}
+function unassignedSelectedCount(){return guests.filter(g=>g.t===null&&selected.has(idKey(g))).length}
 function guestHTML(g){
  const admin=isEditing();
  return `<div class="guest">
-  <div>${admin?`<label class="pick-wrap" title="Select ${esc(g.name)}"><input aria-label="Select ${esc(g.name)}" type="checkbox" class="pick" data-id="${g.id}" ${selected.has(g.id)?'checked':''}></label>`:''}</div>
+  <div>${admin?`<label class="pick-wrap" title="Select ${esc(g.name)}"><input aria-label="Select ${esc(g.name)}" type="checkbox" class="pick" data-id="${g.id}" ${selected.has(idKey(g))?'checked':''}></label>`:''}</div>
   <div class="guest-main">
    <div class="guest-name">${esc(g.name)}</div>${tagHTML(g)}
-   ${admin&&showRemarks?`<div class="guest-tools"><label><input type="checkbox" class="seat-toggle" data-id="${g.id}" ${g.seat?'checked':''}> Seat required</label><input type="text" class="remark-input" data-id="${g.id}" value="${esc(g.r)}" placeholder="Remarks"></div>`:''}
+   ${admin&&showRemarks?`<div class="guest-tools"><label><input type="checkbox" class="seat-toggle" data-id="${g.id}" ${g.seat?'checked':''}> Seat required</label><input type="text" class="name-input" data-id="${g.id}" value="${esc(g.name)}" placeholder="Guest name" aria-label="Rename guest"><input type="text" class="remark-input" data-id="${g.id}" value="${esc(g.r)}" placeholder="VIP/Elderly/Child/Others" aria-label="Guest classification or remarks"></div>`:''}
   </div>
  </div>`;
 }
@@ -300,7 +301,7 @@ function render(){
  $('tables').innerHTML=tables.map(n=>{
   const arr=guests.filter(g=>g.t===n&&matches(g));
   const tableGuests=guests.filter(g=>g.t===n&&matches(g));
-  const allTableSelected=tableGuests.length>0&&tableGuests.every(g=>selected.has(g.id));
+  const allTableSelected=tableGuests.length>0&&tableGuests.every(g=>selected.has(idKey(g)));
   return `<div class="table-card">
    <div class="table-top"><span class="table-title">Table ${String(n).padStart(2,'0')}${n===1?'<span class="tag vip">VIP</span>':''}</span><span class="seat-num">${seatCount(n)}/10 seats</span></div>
    ${adminView?`<div class="bar"><div class="fill ${seatCount(n)>=10?'full':''}" style="width:${Math.min(100,seatCount(n)*10)}%"></div></div>`:''}
@@ -319,7 +320,7 @@ function render(){
  $('clearMove').disabled=!editing||selected.size===0;
  const visibleUnassigned=unassigned().filter(matches);
  $('selectAllUnassigned').disabled=!editing||visibleUnassigned.length===0;
- const allVisibleSelected=visibleUnassigned.length>0&&visibleUnassigned.every(g=>selected.has(g.id));
+ const allVisibleSelected=visibleUnassigned.length>0&&visibleUnassigned.every(g=>selected.has(idKey(g)));
  $('selectAllUnassigned').textContent=allVisibleSelected?'Deselect All':'Select All';
  $('remarksButton').textContent=remarkDirty?'Save Seat Remarks':showRemarks?'Hide Seat Remarks':'Show Seat Remarks';
  $('remarksButton').className='btn '+(remarkDirty?'save':'secondary');
@@ -354,13 +355,24 @@ function bindGuestEvents(){
  document.querySelectorAll('.table-select-all').forEach(button=>button.onclick=()=>{
   const tableNo=Number(button.dataset.table);
   const rows=guests.filter(g=>g.t===tableNo&&matches(g));
-  const all=rows.length>0&&rows.every(g=>selected.has(g.id));
-  rows.forEach(g=>all?selected.delete(g.id):selected.add(g.id));
+  const all=rows.length>0&&rows.every(g=>selected.has(idKey(g)));
+  rows.forEach(g=>all?selected.delete(idKey(g)):selected.add(idKey(g)));
   refresh();
  });
  document.querySelectorAll('.seat-toggle').forEach(el=>el.onchange=()=>{
   const g=guests.find(x=>String(x.id)===String(el.dataset.id));if(!g)return;
   g.seat=el.checked;remarkDirty=true;markDirty();render();bindGuestEvents();
+ });
+ // Keep the edited guest name in the staged guest record without re-rendering while typing.
+ document.querySelectorAll('.name-input').forEach(el=>el.oninput=()=>{
+  const g=guests.find(x=>String(x.id)===String(el.dataset.id));if(!g)return;
+  g.name=el.value;remarkDirty=true;markDirty();
+  $('remarksButton').textContent='Save Seat Remarks';$('remarksButton').className='btn save';
+  const guestNode=el.closest('.guest-main');
+  const nameNode=guestNode.querySelector('.guest-name');
+  if(nameNode)nameNode.textContent=g.name;
+  const pick=document.querySelector(`.pick[data-id=\"${CSS.escape(String(g.id))}\"]`);
+  if(pick){pick.setAttribute('aria-label','Select '+g.name);pick.closest('.pick-wrap').title='Select '+g.name;}
  });
  // Do not re-render the list while typing: preserve the active input and every character.
  document.querySelectorAll('.remark-input').forEach(el=>el.oninput=()=>{
@@ -434,7 +446,7 @@ function moveSelected(){
  const n=Number($('destination').value);
  const incoming=selectedGuests().filter(g=>g.t!==n&&g.seat).length;
  if(seatCount(n)+incoming>10){$('moveStatus').textContent='This table does not have enough available seats.';$('moveStatus').className='statusline error';return}
- guests.forEach(g=>{if(selected.has(g.id))g.t=n});
+ guests.forEach(g=>{if(selected.has(idKey(g)))g.t=n});
  selected.clear();markDirty();$('moveStatus').textContent='Selected guests moved successfully. Changes remain in this session.';$('moveStatus').className='statusline';
  refresh();
 }
@@ -464,11 +476,11 @@ $('search').oninput=refresh;
 $('remarksButton').onclick=()=>{
  if(remarkDirty){
   remarkDirty=false;showRemarks=true;markDirty();
-  $('commitStatus').textContent='Seat remarks saved to this editing session. Not yet committed to Supabase.';
+  $('commitStatus').textContent='Guest names and seat remarks saved to this editing session. Select Save & Exit to commit them to Supabase.';
  }else showRemarks=!showRemarks;
  refresh();
 };
-$('selectAllUnassigned').onclick=()=>{const visible=unassigned().filter(matches);const all=visible.length>0&&visible.every(g=>selected.has(g.id));visible.forEach(g=>all?selected.delete(g.id):selected.add(g.id));refresh()};
+$('selectAllUnassigned').onclick=()=>{const visible=unassigned().filter(matches);const all=visible.length>0&&visible.every(g=>selected.has(idKey(g)));visible.forEach(g=>all?selected.delete(idKey(g)):selected.add(idKey(g)));refresh()};
 $('clearMove').onclick=()=>{selected.clear();refresh()};
 $('move').onclick=moveSelected;
 $('destination').onchange=()=>{render()};
