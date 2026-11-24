@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Great+Vibes&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<title>Luqman & Nadia - Guests Directory</title>
+<title>Wedding Guest List · Development v3</title>
 <style>
 :root{
  --bg:#151a21;--panel:#202833;--panel2:#252f3b;--card:#202a35;--card2:#293542;
@@ -52,15 +52,17 @@ textarea{min-height:86px;resize:vertical}
 .tables{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
 .table-card{min-width:0;background:linear-gradient(160deg,#26323e,#202a34);border:1px solid #3b4957;border-radius:12px;padding:10px}
 .table-top{display:flex;justify-content:space-between;gap:5px;align-items:center;font-size:11px;font-weight:750}
-.table-title{display:flex;align-items:center;gap:6px;min-width:0}.table-actions{display:flex;justify-content:flex-end;margin:6px 0 2px}.table-actions .btn{padding:5px 7px;font-size:9px}.pick-wrap{display:inline-flex;align-items:center;justify-content:center;min-width:20px;min-height:22px;cursor:pointer}.pick-wrap input{width:15px;height:15px;margin:0;cursor:pointer}.directory-label{display:inline-flex;align-items:center;gap:7px}.directory-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#8793a0;box-shadow:0 0 0 3px #8793a022}.directory-dot.success{background:#55c58a;box-shadow:0 0 0 3px #55c58a22}.directory-dot.error{background:#e36b72;box-shadow:0 0 0 3px #e36b7222}.directory-dot.loading{background:#c7a45c;box-shadow:0 0 0 3px #c7a45c22}
+.table-title{display:flex;align-items:center;gap:6px;min-width:0}.table-actions{display:flex;justify-content:flex-end;margin:6px 0 2px}.table-actions .btn{padding:5px 7px;font-size:9px}
+.seat-table-actions{display:flex;justify-content:flex-end;margin:4px 0 5px}.seat-table-actions .btn{padding:4px 6px;font-size:8px}.pick-wrap{display:inline-flex;align-items:center;justify-content:center;min-width:20px;min-height:22px;cursor:pointer}.pick-wrap input{width:15px;height:15px;margin:0;cursor:pointer}.directory-label{display:inline-flex;align-items:center;gap:7px}.directory-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#8793a0;box-shadow:0 0 0 3px #8793a022}.directory-dot.success{background:#55c58a;box-shadow:0 0 0 3px #55c58a22}.directory-dot.error{background:#e36b72;box-shadow:0 0 0 3px #e36b7222}.directory-dot.loading{background:#c7a45c;box-shadow:0 0 0 3px #c7a45c22}
 .seat-num{font-size:10px;color:#aab8c5;white-space:nowrap}
 .bar{height:5px;border-radius:8px;background:#3c4854;margin:7px 0 5px;overflow:hidden}
 .fill{height:100%;background:#7299b9;border-radius:8px}.fill.full{background:#c16c6f}
 .people-count{font-size:10px;color:#aab5c0;margin-bottom:5px}
+ .seat-summary{font-size:10px;color:#b8c5d0;margin:1px 0 5px;white-space:nowrap}
 .guest{border-top:1px solid #35424e;padding:7px 0 5px;display:flex;align-items:flex-start;gap:6px}
 .guest:first-of-type{border-top:0}
 .guest-main{min-width:0;flex:1}
-.guest-name{font-size:11px;font-weight:600;overflow-wrap:anywhere}
+.guest-name{font-size:11px;font-weight:600;overflow-wrap:anywhere}.clickable-guest-name{cursor:pointer}.clickable-guest-name:hover{color:#b8d8f2;text-decoration:underline}
 .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .tag{font-size:9px;letter-spacing:.04em;border-radius:20px;padding:2px 6px;font-weight:800}
 .tag.new{background:#244c3b;color:#a9e2c1}.tag.child{background:#293f59;color:#b7d6f6}
@@ -117,6 +119,218 @@ textarea{min-height:86px;resize:vertical}
  .print-grid .bar,.print-grid .table-actions,.print-grid .guest-tools,.print-grid .pick-wrap,.print-grid .tag.new,.print-grid .tag.child,.print-grid .tag.elderly,.print-grid .tag.duplicate{display:none!important}
  .print-page-title{font-size:9px;color:#647181;text-align:right;margin:0 0 2mm}
 }
+
+/* Development v1: seating arrangement workspace */
+.admin-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.admin-tabs .btn.active{background:#526f88;border-color:#8aa9c4;color:#fff}
+#seatingWorkspace{display:none}
+#seatingWorkspace.active{display:block}
+#tables.guest-management-hidden{display:none}
+.seating-layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:start}
+.seating-layout.sidebar-hidden{grid-template-columns:minmax(0,1fr)}
+.seating-layout.sidebar-hidden .seating-right-column{display:none}
+.seating-right-column{min-width:0;display:grid;gap:10px;position:sticky;top:12px;align-self:start;height:max-content}
+.seating-actions{display:flex;gap:7px;flex-wrap:wrap}
+.seating-actions .btn{flex:1}
+.floorplan{background:linear-gradient(160deg,#1a242e,#151d26);border:1px solid #3b4957;border-radius:15px;padding:14px;min-width:0}
+.floorplan-top{display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.floor-feature{border:1px solid #536170;background:#273442;color:#dce6ef;border-radius:8px;padding:7px 12px;font-size:10px;font-weight:700;text-align:center}
+.floor-feature.stage{min-width:38%;background:#35465a;border-color:#6b8298}
+.floor-feature.dance{background:#293c4c;border-style:dashed;min-width:28%}
+.floor-main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 30px repeat(3,minmax(0,1fr));column-gap:8px;row-gap:18px;align-items:stretch}
+.floor-side{display:contents}
+#floorLeft>:nth-child(1),#floorLeftPublic>:nth-child(1){grid-column:1}#floorLeft>:nth-child(2),#floorLeftPublic>:nth-child(2){grid-column:2}#floorLeft>:nth-child(3),#floorLeftPublic>:nth-child(3){grid-column:3}#floorLeft>:nth-child(4),#floorLeftPublic>:nth-child(4){grid-column:1}#floorLeft>:nth-child(5),#floorLeftPublic>:nth-child(5){grid-column:2}#floorLeft>:nth-child(6),#floorLeftPublic>:nth-child(6){grid-column:3}#floorLeft>:nth-child(7),#floorLeftPublic>:nth-child(7){grid-column:1}#floorLeft>:nth-child(8),#floorLeftPublic>:nth-child(8){grid-column:2}#floorLeft>:nth-child(9),#floorLeftPublic>:nth-child(9){grid-column:3}#floorLeft>:nth-child(10),#floorLeftPublic>:nth-child(10){grid-column:1}#floorLeft>:nth-child(11),#floorLeftPublic>:nth-child(11){grid-column:2}#floorLeft>:nth-child(12),#floorLeftPublic>:nth-child(12){grid-column:3}
+#floorRight>:nth-child(1),#floorRightPublic>:nth-child(1){grid-column:5}#floorRight>:nth-child(2),#floorRightPublic>:nth-child(2){grid-column:6}#floorRight>:nth-child(3),#floorRightPublic>:nth-child(3){grid-column:7}#floorRight>:nth-child(4),#floorRightPublic>:nth-child(4){grid-column:5}#floorRight>:nth-child(5),#floorRightPublic>:nth-child(5){grid-column:6}#floorRight>:nth-child(6),#floorRightPublic>:nth-child(6){grid-column:7}#floorRight>:nth-child(7),#floorRightPublic>:nth-child(7){grid-column:5}#floorRight>:nth-child(8),#floorRightPublic>:nth-child(8){grid-column:6}#floorRight>:nth-child(9),#floorRightPublic>:nth-child(9){grid-column:7}#floorRight>:nth-child(10),#floorRightPublic>:nth-child(10){grid-column:5}#floorRight>:nth-child(11),#floorRightPublic>:nth-child(11){grid-column:6}#floorRight>:nth-child(12),#floorRightPublic>:nth-child(12){grid-column:7}
+
+#floorLeft>:nth-child(-n+3),#floorRight>:nth-child(-n+3),#floorLeftPublic>:nth-child(-n+3),#floorRight>:nth-child(-n+3){grid-row:1}
+#floorLeft>:nth-child(n+4):nth-child(-n+6),#floorRight>:nth-child(n+4):nth-child(-n+6),#floorLeftPublic>:nth-child(n+4):nth-child(-n+6),#floorRight>:nth-child(n+4):nth-child(-n+6){grid-row:2}
+#floorLeft>:nth-child(n+7):nth-child(-n+9),#floorRight>:nth-child(n+7):nth-child(-n+9),#floorLeftPublic>:nth-child(n+7):nth-child(-n+9),#floorRight>:nth-child(n+7):nth-child(-n+9){grid-row:3}
+#floorLeft>:nth-child(n+10):nth-child(-n+12),#floorRight>:nth-child(n+10):nth-child(-n+12),#floorLeftPublic>:nth-child(n+10):nth-child(-n+12),#floorRight>:nth-child(n+10):nth-child(-n+12){grid-row:4}
+.floor-side{display:contents}
+.floor-center{grid-column:4;grid-row:1 / span 4;display:flex;align-items:stretch;justify-content:center;min-height:100%}
+.red-carpet{width:100%;min-height:100%;border-radius:8px;background:linear-gradient(90deg,#632e36,#8d4149,#632e36);border:1px solid #a65c64;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:none;color:#f6dfe1;font-size:9px;font-weight:800;letter-spacing:.12em;padding:6px 2px}
+.seat-table{width:100%;box-sizing:border-box;background:linear-gradient(160deg,#263441,#202b36);border:1px solid #465565;border-radius:10px;padding:7px;min-width:0;min-height:130px;transition:border-color .15s,background .15s,transform .15s;position:relative}
+.seat-table.drop-target{border:1px dashed #9fc1df;background:#2d4050;transform:translateY(-1px)}
+.seat-table.over-capacity{border-color:#b68b4b}
+.seat-table-head{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:5px}
+.seat-table-title{font-size:10px;font-weight:800}
+.table-drag-handle,.guest-drag-handle{border:0;background:transparent;color:#aebdca;cursor:grab;padding:2px 4px;border-radius:5px;line-height:1;touch-action:none}
+.table-drag-handle:hover,.guest-drag-handle:hover{background:#ffffff12;color:#fff}
+.table-drag-handle{font-size:17px;letter-spacing:-3px}
+.seat-count{font-size:9px;color:#b8c5d0;white-space:nowrap}
+.seat-count.warn{color:#f0c77e}
+.seat-guest-list{display:grid;gap:3px}
+.seat-guest{display:flex;align-items:center;gap:4px;border-top:1px solid #35424e;padding:4px 0 2px;min-width:0}
+.seat-guest:first-child{border-top:0}
+.seat-guest input{width:13px;height:13px;flex:0 0 auto;margin:0}
+.seat-pick{appearance:none;-webkit-appearance:none;width:8px;height:8px;flex:0 0 8px;margin:0;border:1px solid #aebdca;border-radius:50%;background:#17212b;cursor:pointer;display:inline-grid;place-content:center}
+.seat-pick:checked{background:#8db1d0;border-color:#b8d8f2}
+.seat-pick:checked::after{content:"";width:2px;height:2px;border-radius:50%;background:#17212b}
+ .seat-guest .seat-pick,.unassigned-chip .seat-pick{width:10px;height:10px;flex:0 0 10px}
+ .seat-pick:checked::after{width:5px;height:5px}
+.seat-table-actions{display:flex;justify-content:flex-end;margin:2px 0 5px}
+.seat-table-actions .btn{padding:4px 9px;font-size:9px}
+.seating-unassigned .section-head{align-items:center;gap:8px;flex-wrap:wrap}
+.seating-unassigned .seating-actions{display:flex;gap:6px;flex-wrap:wrap}
+
+.seat-guest-name{font-size:9px;font-weight:600;min-width:0;flex:1;overflow-wrap:anywhere;cursor:pointer}
+.seat-guest-name:hover{color:#b8d8f2;text-decoration:underline}
+.seat-guest .guest-drag-handle{font-size:14px;flex:0 0 auto}
+.seat-guest.selected{background:#30465a;border-radius:5px;padding-left:3px;padding-right:2px}
+.seat-empty{font-size:9px;color:#778695;padding:6px 0}
+.floor-bottom{display:flex;justify-content:space-between;align-items:end;gap:8px;margin-top:12px;flex-wrap:wrap}
+.floor-entrance{background:#35483f;border:1px solid #5d8a70;color:#d6f0df}
+.floor-photobooth{background:#40364b;border:1px solid #78658d;color:#eadcf5}
+.floor-led{font-size:9px;color:#b8c6d2;text-align:center;padding:5px;border:1px solid #536170;border-radius:7px;background:#202d38;margin:0 0 8px}
+.floor-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;color:#9eacb9;font-size:9px}
+.seating-sidepanel{background:#1b2530;border:1px solid #3d4b59;border-radius:12px;padding:13px;position:static;min-width:0}
+.seating-sidepanel h3{font-size:13px;margin:0 0 4px}
+.details-empty{font-size:11px;color:#9eacb9;padding:18px 4px}
+.detail-field{display:grid;gap:5px;margin-top:11px}
+.detail-field label{font-size:10px;color:#aebbc7;font-weight:700}
+.detail-field input,.detail-field select,.detail-field textarea{font-size:11px;padding:8px}
+.detail-field textarea{min-height:70px}
+.detail-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.seating-unassigned{margin-top:12px;background:#1b2530;border:1px solid #3d4b59;border-radius:12px;padding:12px}
+.seating-unassigned-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.unassigned-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid #465565;border-radius:7px;background:#263441;font-size:10px;max-width:100%}
+.unassigned-chip.selected{border-color:#8db1d0;background:#30465a}
+.unassigned-chip .guest-drag-handle{font-size:13px}
+.seating-selection-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.table-arrangement-heading{margin-bottom:8px}
+.seating-selection-bar{min-height:34px;margin-bottom:12px}
+.seating-instructions{font-size:11px;color:var(--muted)}
+.seating-status-group{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.seating-right-column .sidebar-toggle{justify-self:end;width:max-content;max-width:100%;margin-bottom:0}
+.seating-right-column{position:sticky;top:12px;align-self:start}
+@media(max-width:980px){.seating-right-column{position:static}}
+
+.seating-warning{font-size:10px;color:#eac67f;margin-top:5px}
+ #seatingWorkspace.review-mode #toggleDetailsSidebar,
+ #seatingWorkspace.review-mode .seating-right-column,
+ #seatingWorkspace.review-mode .seating-selection-bar,
+ #seatingWorkspace.review-mode .floor-legend,
+ #seatingWorkspace.review-mode .seating-unassigned .seating-actions{display:none!important}
+ #seatingWorkspace.review-mode .seating-layout{grid-template-columns:minmax(0,1fr)!important}
+ #seatingWorkspace.review-mode .seating-unassigned{margin-top:12px}
+
+ #publicSeatingWorkspace{display:none}
+ #publicSeatingWorkspace.active{display:block}
+ .public-floorplan .seat-guest-name{cursor:default;text-decoration:none}
+ .seat-count-line{font-size:9px;color:#b8c5d0;margin:1px 0 5px;white-space:nowrap}
+ .seat-count-line strong{font-weight:800}
+ @media print{
+  @page{size:A3 landscape;margin:8mm}
+  #printRoot{width:100%!important;padding:0!important}
+  .print-floorplan-page{width:100%;height:100%;box-sizing:border-box;overflow:hidden;background:#fff;padding:5mm;color:#17212b}
+  .print-floorplan-page .floorplan{background:#fff!important;border:0!important;padding:0!important}
+  .print-floorplan-page .floor-feature{background:#e8edf2!important;color:#17212b!important;border-color:#9eabb8!important}
+  .print-floorplan-page .floor-feature.stage{background:#dce5ee!important}
+  .print-floorplan-page .red-carpet{background:#8d4149!important;color:#fff!important;border-color:#632e36!important}
+  .print-floorplan-page .seat-table{background:#f8fafc!important;border-color:#aebbc7!important;color:#17212b!important;min-height:0!important;padding:2.2mm!important}
+  .print-floorplan-page .seat-table-title{color:#17212b!important;font-size:8pt!important}
+  .print-floorplan-page .seat-count-line{font-size:6.5pt!important;color:#344454!important}
+  .print-floorplan-page .seat-guest-list{gap:0!important}
+  .print-floorplan-page .seat-guest{border-color:#d8e0e7!important;padding:1mm 0!important}
+  .print-floorplan-page .seat-guest-name{font-size:6.2pt!important;line-height:1.15!important;color:#17212b!important}
+  .print-floorplan-page .seat-table-actions,.print-floorplan-page .seat-pick,.print-floorplan-page .table-drag-handle,.print-floorplan-page .guest-drag-handle,.print-floorplan-page .seating-warning{display:none!important}
+  .print-floorplan-page .floor-main{column-gap:4mm!important;row-gap:3mm!important;grid-template-columns:repeat(3,minmax(0,1fr)) 8mm repeat(3,minmax(0,1fr))!important}
+ }
+@media(max-width:980px){.seating-layout{grid-template-columns:1fr}.seating-right-column{position:static}.seating-sidepanel{position:static}.floor-main{grid-template-columns:repeat(3,minmax(0,1fr)) 24px repeat(3,minmax(0,1fr))}}
+@media(max-width:620px){.floorplan{padding:7px}.floor-main{grid-template-columns:repeat(3,minmax(0,1fr)) 18px repeat(3,minmax(0,1fr));gap:4px}.floor-side{column-gap:4px;row-gap:12px}.seat-table{padding:5px;min-height:120px}.seat-table-title{font-size:9px}.seat-count{font-size:8px}.seat-guest-name{font-size:8px}.floor-feature{font-size:8px;padding:6px}.red-carpet{font-size:7px}}
+
+
+ @media print{
+  @page{size:A3 landscape;margin:7mm}
+  html,body{width:420mm!important;height:auto!important;margin:0!important;padding:0!important}
+  #printRoot{display:block!important;width:100%!important;padding:0!important;margin:0!important}
+  .print-floorplan-page{display:block!important;width:100%;height:282mm;box-sizing:border-box;overflow:hidden;background:#fff;color:#17212b;padding:2mm 3mm;break-after:page;page-break-after:always}
+  .print-floorplan-page:last-child{break-after:auto;page-break-after:auto}
+  .print-floorplan-page .hero{display:block!important;background:#fff!important;color:#17212b!important;padding:0 0 5mm!important;margin:0 0 7mm!important;text-align:center!important;border-bottom:1px solid #cbd3db!important}
+  .print-floorplan-page .hero .eyebrow,.print-floorplan-page .hero .sub{color:#344454!important}
+  .print-floorplan-page .hero h1{color:#17212b!important;font-size:25pt!important;margin:0!important}
+  .print-floorplan-page .print-heading{font-size:15pt;color:#17212b;text-align:center;margin:0 0 5mm}
+  .print-floorplan-page .floorplan{background:#fff!important;border:0!important;padding:0!important;margin:0!important}
+  .print-floorplan-page .floorplan-top{margin:0 0 3mm!important}
+  .print-floorplan-page .floor-feature{background:#e8edf2!important;color:#17212b!important;border-color:#9eabb8!important}
+  .print-floorplan-page .floor-feature.stage{background:#dce5ee!important;min-width:38%!important;padding:3mm!important}
+  .print-floorplan-page .floor-feature.dance{padding:2.5mm!important;margin-bottom:4mm!important}
+  .print-floorplan-page .red-carpet{background:#8d4149!important;color:#fff!important;border-color:#632e36!important;width:100%!important}
+  .print-floorplan-page .print-floor-main{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr)) 8mm repeat(3,minmax(0,1fr))!important;column-gap:3mm!important;row-gap:3mm!important;align-items:stretch!important}
+  .print-floorplan-page .seat-table{background:#f8fafc!important;border:1px solid #aebbc7!important;color:#17212b!important;min-width:0!important;min-height:0!important;box-sizing:border-box!important;padding:2mm!important}
+  .print-floorplan-page .seat-table-title{color:#17212b!important;font-size:8pt!important}
+  .print-floorplan-page .seat-count-line{font-size:6.5pt!important;color:#344454!important;white-space:nowrap!important}
+  .print-floorplan-page .seat-guest-list{gap:0!important}
+  .print-floorplan-page .seat-guest{border-color:#d8e0e7!important;padding:1mm 0!important}
+  .print-floorplan-page .seat-guest-name{font-size:6.3pt!important;line-height:1.15!important;color:#17212b!important}
+  .print-floorplan-page .seat-empty{color:#64748b!important}
+  .print-page-one .print-floor-main{grid-template-rows:repeat(2,minmax(0,1fr))!important;min-height:205mm!important}
+  .print-page-two .print-floor-main{grid-template-rows:repeat(2,minmax(0,1fr))!important;min-height:235mm!important}
+  .print-page-one .seat-table,.print-page-two .seat-table{height:100%!important;min-height:0!important}
+ }
+
+ @media print{
+  .print-floorplan-page{
+   height:282mm!important;
+   overflow:visible!important;
+   break-after:page!important;
+   page-break-after:always!important;
+  }
+  .print-floorplan-page:last-child{
+   break-after:auto!important;
+   page-break-after:auto!important;
+  }
+  .print-floorplan-page .print-floor-main{
+   display:grid!important;
+   grid-template-columns:repeat(3,minmax(0,1fr)) 8mm repeat(3,minmax(0,1fr))!important;
+   grid-template-rows:repeat(2,minmax(0,1fr))!important;
+   align-items:stretch!important;
+   min-height:0!important;
+   height:205mm!important;
+   overflow:visible!important;
+  }
+  .print-page-two .print-floor-main{
+   height:245mm!important;
+  }
+  .print-floorplan-page .seat-table{
+   height:auto!important;
+   min-height:0!important;
+   overflow:visible!important;
+   align-self:stretch!important;
+   box-sizing:border-box!important;
+  }
+  .print-floorplan-page .seat-guest-list,
+  .print-floorplan-page .seat-guest{
+   overflow:visible!important;
+   min-height:0!important;
+  }
+  .print-floorplan-page .seat-guest-name{
+   display:block!important;
+   overflow:visible!important;
+   white-space:normal!important;
+   overflow-wrap:anywhere!important;
+  }
+  .print-floorplan-page .floor-center{
+   min-height:100%!important;
+   height:100%!important;
+  }
+  .print-floorplan-page .red-carpet{
+   min-height:100%!important;
+   height:100%!important;
+  }
+ }
+
+.sidebar-status-group{position:relative;display:flex;justify-content:flex-start;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:0}
+.seating-right-column{position:sticky;top:12px;align-self:start;height:max-content}
+@media(max-width:980px){.seating-right-column{position:static}}
+
+
+.sidebar-reopen-row{display:flex;justify-content:flex-end;align-items:center;gap:8px;min-height:0;margin:0 0 8px}
+.sidebar-reopen{display:none}
+.sidebar-hidden-statuses{display:none;align-items:center;gap:8px;flex-wrap:wrap}
+#seatingWorkspace.sidebar-is-hidden .sidebar-reopen{display:inline-flex}
+#seatingWorkspace.sidebar-is-hidden .sidebar-hidden-statuses{display:flex}
+
 </style>
 </head>
 <body>
@@ -134,13 +348,50 @@ textarea{min-height:86px;resize:vertical}
 </section>
 
 <section class="panel">
- <div class="section-head">
+ <div class="section-head table-arrangement-heading">
   <h2>Table Arrangement</h2>
   <div class="toolbar"><span class="small">21 Tables</span></div>
  </div>
- <div id="tableToolbar" class="toolbar hidden" style="justify-content:flex-end;margin:-2px 0 12px">
-  <span id="sessionStatus" class="status clean">No pending changes</span>
-  <button id="remarksButton" class="btn secondary">Show Seat Remarks</button>
+ <div id="tableToolbar" class="toolbar hidden" style="justify-content:flex-end;margin:-2px 0 12px"></div>
+ <div id="seatingWorkspace">
+  <div class="seating-selection-bar">
+   <div class="seating-instructions">Drag guest handles to move guests. Drag table handles to swap assignments.</div>
+
+  </div>
+  <div class="sidebar-reopen-row">
+   <div class="sidebar-hidden-statuses" id="sidebarHiddenStatuses">
+    <span class="status clean" id="seatingSelectionStatusHidden">No guests selected</span>
+    <span class="status clean" id="sessionStatusHidden">No pending changes</span>
+   </div>
+   <button type="button" class="btn secondary sidebar-reopen" id="showDetailsSidebar" aria-expanded="false">Show Guest Details</button>
+  </div>
+  <div class="seating-layout" id="seatingLayout">
+   <div>
+    <div class="floorplan">
+     <div class="floorplan-top"><div class="floor-feature stage">STAGE</div></div>
+     <div class="floor-feature dance" style="margin:0 auto 10px;width:34%">DANCE FLOOR</div>
+     <div class="floor-main">
+      <div class="floor-side" id="floorLeft"></div>
+      <div class="floor-center"><div class="red-carpet">RED CARPET</div></div>
+      <div class="floor-side" id="floorRight"></div>
+     </div>
+     <div class="floor-legend"><span>⋮⋮ Table grip = swap entire table assignments</span><span>⠿ Guest grip = move selected guests</span><span>11–25 seats = temporary warning</span></div>
+    </div>
+    <div class="seating-unassigned"><div class="section-head"><h3 style="margin:0">Unassigned Guests</h3><div class="seating-actions"><button type="button" class="btn secondary" id="selectAllSeatingUnassigned" disabled>Select All</button><button type="button" class="btn danger" id="deleteUnassignedSelectedBtn" disabled>Delete Selected</button></div></div><div class="small" id="seatingUnassignedCount">0 guests</div><div class="seating-unassigned-list" id="seatingUnassignedList"></div></div>
+   </div>
+   <div class="seating-right-column"><div class="seating-status-group sidebar-status-group"><span class="status clean" id="seatingSelectionStatus">No guests selected</span><span class="status clean" id="sessionStatus">No pending changes</span></div><button type="button" class="btn secondary sidebar-toggle" id="toggleDetailsSidebar" aria-expanded="true">Hide Guest Details</button><aside class="seating-sidepanel" id="guestDetailsPanel"><h3>Guest Details</h3><div class="details-empty">Select a guest name to view or edit their details.</div></aside><div class="seating-actions"><button type="button" class="btn secondary" id="unassignSelectedBtn" disabled>Unassign Selected</button><button type="button" class="btn secondary" id="deselectSelectedBtn" disabled>Deselect Selected</button><button type="button" class="btn danger" id="deleteSeatingSelectedBtn" disabled>Delete Selected</button></div></div>
+  </div>
+ </div>
+ <div id="publicSeatingWorkspace" class="public-seating-workspace">
+  <div class="floorplan public-floorplan">
+   <div class="floorplan-top"><div class="floor-feature stage">STAGE</div></div>
+   <div class="floor-feature dance" style="margin:0 auto 10px;width:34%">DANCE FLOOR</div>
+   <div class="floor-main">
+    <div class="floor-side" id="floorLeftPublic"></div>
+    <div class="floor-center"><div class="red-carpet">RED CARPET</div></div>
+    <div class="floor-side" id="floorRightPublic"></div>
+   </div>
+  </div>
  </div>
  <div id="tables" class="tables"></div>
 </section>
@@ -155,8 +406,7 @@ textarea{min-height:86px;resize:vertical}
   <div class="section-head"><h3>Selected Guests</h3><button id="clearMove" class="btn secondary" disabled>Clear Selection</button></div>
   <div id="selectionInfo" class="small">No guests selected.</div>
   <div class="toolbar" style="margin-top:9px">
-   <select id="destination" aria-label="Destination table"></select>
-   <button id="move" class="btn" disabled>Move Selected to Table</button>
+   <button id="unassignSelectedOld" class="btn secondary" disabled>Unassign Selected</button>
    <button id="delete" class="btn danger" disabled>Delete Selected</button>
   </div>
   <div id="moveStatus" class="statusline"></div>
@@ -205,7 +455,7 @@ textarea{min-height:86px;resize:vertical}
   </div>
  </div>
 </section>
-<div class="footer">Connected to Supabase · View Changes is a review step; Save & Exit commits your changes.</div>
+<div class="footer">Development Version 3 · Connected to the existing Supabase project · Save &amp; Exit commits staged changes.</div>
 </div>
 <div id="modalRoot"></div>
 <div id="printRoot" aria-hidden="true"></div>
@@ -294,6 +544,8 @@ const tags=g=>{
 };
 const matches=g=>g.name.toLowerCase().includes($('search').value.toLowerCase());
 let viewState='public'; // public | editing | savedAdmin
+let activeAdminView='seating';
+let detailGuestId=null;
 const isAdmin=()=>viewState!=='public';
 const isEditing=()=>viewState==='editing';
 function tagHTML(g){
@@ -311,6 +563,8 @@ function tagHTML(g){
 function updateStatus(){
  const el=$('sessionStatus');
  if(el){el.textContent=dirty?'Unsaved session changes':'No pending changes';el.className='status '+(dirty?'':'clean')}
+  const mirror=$('sessionStatusHidden');
+  if(mirror){mirror.textContent=dirty?'Unsaved session changes':'No pending changes';mirror.className='status '+(dirty?'':'clean')}
 }
 function markDirty(){dirty=true;updateStatus();$('commitStatus').textContent=''}
 function tableSelectedCount(){return guests.filter(g=>g.t!==null&&selected.has(idKey(g))).length}
@@ -318,10 +572,9 @@ function unassignedSelectedCount(){return guests.filter(g=>g.t===null&&selected.
 function guestHTML(g){
  const admin=isEditing();
  return `<div class="guest">
-  <div>${admin?`<label class="pick-wrap" title="Select ${esc(g.name)}"><input aria-label="Select ${esc(g.name)}" type="checkbox" class="pick" data-id="${g.id}" ${selected.has(idKey(g))?'checked':''}></label>`:''}</div>
+  <div>${admin?`<label class="pick-wrap" title="Select ${esc(g.name)}"><input aria-label="Select ${esc(g.name)}" type="checkbox" class="pick" data-id="${esc(g.id)}" ${selected.has(idKey(g))?'checked':''}></label>`:''}</div>
   <div class="guest-main">
-   <div class="guest-name">${esc(g.name)}</div>${tagHTML(g)}
-   ${admin&&showRemarks?`<div class="guest-tools"><label><input type="checkbox" class="seat-toggle" data-id="${g.id}" ${g.seat?'checked':''}> Seat required</label><input type="text" class="name-input" data-id="${g.id}" value="${esc(g.name)}" placeholder="Guest name" aria-label="Rename guest"><input type="text" class="remark-input" data-id="${g.id}" value="${esc(g.r)}" placeholder="VIP/Elderly/Child/Others" aria-label="Guest classification or remarks"></div>`:''}
+   <div class="guest-name ${admin?'clickable-guest-name':''}" ${admin?`data-open-guest="${esc(g.id)}" role="button" tabindex="0"`:''}>${esc(g.name)}</div>${tagHTML(g)}
   </div>
  </div>`;
 }
@@ -350,15 +603,22 @@ function render(){
  $('unassigned').innerHTML=unassigned().filter(matches).map(g=>`<div class="unassigned-item">${guestHTML(g)}</div>`).join('')||'<span class="small">No unassigned guests.</span>';
 
  $('tableToolbar').classList.toggle('hidden',!editing);
+ // Admin tabs were removed; the Seating Arrangement workspace is now the sole admin view.
+ $('seatingWorkspace').classList.toggle('active',editing);
+ $('seatingWorkspace').classList.remove('review-mode');
+ $('publicSeatingWorkspace').classList.toggle('active',!editing);
+ $('tables').classList.add('hidden');
+ $('unassignedPanel').classList.add('hidden');
+ if(!editing)renderPublicFloorplan();
+ $('sharedSelectionActions').classList.toggle('hidden',true);
  $('selectAllUnassigned').classList.toggle('hidden',!editing);
- $('sharedSelectionActions').classList.toggle('hidden',!editing);
+ $('sharedSelectionActions').classList.toggle('hidden',true);
  $('clearMove').disabled=!editing||selected.size===0;
  const visibleUnassigned=unassigned().filter(matches);
  $('selectAllUnassigned').disabled=!editing||visibleUnassigned.length===0;
  const allVisibleSelected=visibleUnassigned.length>0&&visibleUnassigned.every(g=>selected.has(idKey(g)));
  $('selectAllUnassigned').textContent=allVisibleSelected?'Deselect All':'Select All';
- $('remarksButton').textContent=remarkDirty?'Save Seat Remarks':showRemarks?'Hide Seat Remarks':'Show Seat Remarks';
- $('remarksButton').className='btn '+(remarkDirty?'save':'secondary');
+
  $('editingTools').classList.toggle('hidden',!editing);
  $('editingAccessButtons').classList.toggle('hidden',!editing);
  $('savedAccessButtons').classList.toggle('hidden',viewState!=='savedAdmin');
@@ -368,21 +628,11 @@ function render(){
  $('loginArea').classList.toggle('hidden',adminView);
  $('adminPanel').querySelector('.section-head .small').textContent=adminView?(editing?'Editing Mode · Unlocked':'Saved Admin View'):'Administrator access';
 
- const dest=$('destination');
- const previous=dest.value||'1';
- const incoming=n=>selectedGuests().filter(g=>g.t!==n&&g.seat).length;
- dest.innerHTML=tables.map(n=>{
-  const current=seatCount(n);
-  const projected=current+incoming(n);
-  const full=current>=10;
-  return `<option value="${n}" ${String(n)===String(previous)?'selected':''} ${projected>10?'disabled':''}>Table ${String(n).padStart(2,'0')} · ${String(current).padStart(2,'0')}/10${full?' · FULL':''}</option>`;
- }).join('')+`<option value="unassigned" ${dest.value==='unassigned'?'selected':''}>Unassigned</option>`;
- const destinationIsUnassigned=dest.value==='unassigned';
  $('selectionInfo').textContent=selected.size?`${selected.size} guest entries selected across ${new Set(selectedGuests().map(g=>g.party)).size} party/group(s).`:'No guests selected.';
- $('move').textContent=destinationIsUnassigned?'Move Selected to Unassigned':'Move Selected to Table';
- $('move').disabled=!selected.size||(!destinationIsUnassigned&&seatCount(Number(dest.value))+incoming(Number(dest.value))>10);
+ $('unassignSelectedOld').disabled=!selected.size;
  $('delete').disabled=!selected.size;
  updateStatus();
+ if(adminView&&activeAdminView==='seating')renderSeating();
 }
 function bindGuestEvents(){
  if(!isEditing())return;
@@ -391,39 +641,16 @@ function bindGuestEvents(){
   refresh();
  });
  document.querySelectorAll('.table-select-all').forEach(button=>button.onclick=()=>{
-  const tableNo=Number(button.dataset.table);
-  const rows=guests.filter(g=>g.t===tableNo&&matches(g));
+  const tableNo=Number(button.dataset.table),rows=guests.filter(g=>g.t===tableNo&&matches(g));
   const all=rows.length>0&&rows.every(g=>selected.has(idKey(g)));
-  rows.forEach(g=>all?selected.delete(idKey(g)):selected.add(idKey(g)));
-  refresh();
+  rows.forEach(g=>all?selected.delete(idKey(g)):selected.add(idKey(g)));refresh();
  });
- document.querySelectorAll('.seat-toggle').forEach(el=>el.onchange=()=>{
-  const g=guests.find(x=>String(x.id)===String(el.dataset.id));if(!g)return;
-  g.seat=el.checked;remarkDirty=true;markDirty();render();bindGuestEvents();
- });
- // Keep the edited guest name in the staged guest record without re-rendering while typing.
- document.querySelectorAll('.name-input').forEach(el=>el.oninput=()=>{
-  const g=guests.find(x=>String(x.id)===String(el.dataset.id));if(!g)return;
-  g.name=el.value;remarkDirty=true;markDirty();
-  $('remarksButton').textContent='Save Seat Remarks';$('remarksButton').className='btn save';
-  const guestNode=el.closest('.guest-main');
-  const nameNode=guestNode.querySelector('.guest-name');
-  if(nameNode)nameNode.textContent=g.name;
-  const pick=document.querySelector(`.pick[data-id=\"${CSS.escape(String(g.id))}\"]`);
-  if(pick){pick.setAttribute('aria-label','Select '+g.name);pick.closest('.pick-wrap').title='Select '+g.name;}
- });
- // Do not re-render the list while typing: preserve the active input and every character.
- document.querySelectorAll('.remark-input').forEach(el=>el.oninput=()=>{
-  const g=guests.find(x=>String(x.id)===String(el.dataset.id));if(!g)return;
-  g.r=el.value;remarkDirty=true;markDirty();
-  $('remarksButton').textContent='Save Seat Remarks';$('remarksButton').className='btn save';
-  const guestNode=el.closest('.guest-main');
-  let tagsNode=guestNode.querySelector('.tags');
-  const html=tagHTML(g);
-  if(html){if(tagsNode)tagsNode.outerHTML=html;else el.insertAdjacentHTML('beforebegin',html)}
-  else if(tagsNode)tagsNode.remove();
+ document.querySelectorAll('[data-open-guest]').forEach(el=>{
+  const open=()=>openGuestDetails(el.dataset.openGuest);
+  el.onclick=open;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}};
  });
 }
+
 function cleanPrintClone(node){
  const clone=node.cloneNode(true);
  clone.querySelectorAll('.table-actions,.guest-tools,.pick-wrap,.bar,.tag.new,.tag.child,.tag.elderly,.tag.duplicate').forEach(el=>el.remove());
@@ -431,24 +658,48 @@ function cleanPrintClone(node){
 }
 function exportGuestListPDF(){
  const root=$('printRoot');root.innerHTML='';
- const previousSearch=$('search').value;$('search').value='';render();
- const cards=Array.from($('tables').querySelectorAll('.table-card'));
- const hero=cleanPrintClone(document.querySelector('.hero'));
- const page1=document.createElement('section');page1.className='print-page';
- const heroWrap=document.createElement('div');heroWrap.className='print-hero';heroWrap.append(hero);
- const head1=document.createElement('div');head1.className='print-arrangement-head';
- const title1=document.createElement('h2');title1.className='print-heading';title1.textContent='Table Arrangement';
- const count1=document.createElement('span');count1.textContent='21 Tables';head1.append(title1,count1);
- const grid1=document.createElement('div');grid1.className='print-grid';
- cards.slice(0,10).forEach(card=>grid1.append(cleanPrintClone(card)));
- page1.append(heroWrap,head1,grid1);
- const page2=document.createElement('section');page2.className='print-page';
- const head2=document.createElement('div');head2.className='print-page-title';head2.textContent='Table Arrangement · Continued';
- const grid2=document.createElement('div');grid2.className='print-grid';
- cards.slice(10).forEach(card=>grid2.append(cleanPrintClone(card)));
- page2.append(head2,grid2);
- root.append(page1,page2);
- $('search').value=previousSearch;render();bindGuestEvents();
+ const source=document.querySelector('#seatingWorkspace .floorplan');
+ const hero=document.querySelector('.hero');
+ const leftMap=new Map([...source.querySelectorAll('#floorLeft .seat-table')].map(c=>[Number(c.dataset.dropTable),c]));
+ const rightMap=new Map([...source.querySelectorAll('#floorRight .seat-table')].map(c=>[Number(c.dataset.dropTable),c]));
+ const leftRows=[[2,4,6],[8,10,12],[14,16,18],[20,null,null]];
+ const rightRows=[[5,3,1],[11,9,7],[17,15,13],[null,21,19]];
+ function makePage(pageNo,startRow,endRow){
+  const page=document.createElement('section');
+  page.className='print-page print-floorplan-page '+(pageNo===2?'print-page-two':'print-page-one');
+  if(pageNo===1&&hero)page.append(hero.cloneNode(true));
+  else {const heading=document.createElement('h2');heading.className='print-heading';heading.textContent='Table Arrangement — Continued';page.append(heading);}
+  const fp=document.createElement('div');fp.className='floorplan print-fp';
+  if(pageNo===1){
+   const top=source.querySelector('.floorplan-top');
+   const dance=source.querySelector('.floor-feature.dance');
+   if(top)fp.append(top.cloneNode(true));
+   if(dance)fp.append(dance.cloneNode(true));
+  }
+  const main=document.createElement('div');main.className='floor-main print-floor-main';
+  for(let r=startRow;r<endRow;r++){
+   for(let c=0;c<3;c++){
+    const ln=leftRows[r][c],rn=rightRows[r][c];
+    if(ln&&leftMap.has(ln)){
+     const card=leftMap.get(ln).cloneNode(true);
+     card.style.gridColumn=String(c+1);card.style.gridRow=String(r-startRow+1);main.append(card);
+    }
+    if(rn&&rightMap.has(rn)){
+     const card=rightMap.get(rn).cloneNode(true);
+     card.style.gridColumn=String(c+5);card.style.gridRow=String(r-startRow+1);main.append(card);
+    }
+   }
+  }
+  const center=document.createElement('div');center.className='floor-center';
+  const carpet=document.createElement('div');carpet.className='red-carpet';carpet.textContent='RED CARPET';center.append(carpet);
+  center.style.gridColumn='4';center.style.gridRow=`1 / span ${endRow-startRow}`;main.append(center);
+  fp.append(main);page.append(fp);
+  page.querySelectorAll('.table-drag-handle,.guest-drag-handle,.seat-pick,.seat-table-actions,.seating-warning,.floor-legend').forEach(el=>el.remove());
+  page.querySelectorAll('.seat-table').forEach(card=>card.classList.remove('over-capacity','drop-target'));
+  root.append(page);
+ }
+ makePage(1,0,2);
+ makePage(2,2,4);
  window.print();
 }
 $('exportPdf').addEventListener('click',exportGuestListPDF);
@@ -509,20 +760,13 @@ function renderPreview(){
  $('savePreview').onclick=()=>showDuplicateConfirmation(previewRows);
  $('cancelPreview').onclick=()=>{previewRows=[];box.classList.add('hidden')};
 }
-function moveSelected(){
- const destination=$('destination').value;
- const toUnassigned=destination==='unassigned';
- const n=toUnassigned?null:Number(destination);
- if(!toUnassigned){
-  const incoming=selectedGuests().filter(g=>g.t!==n&&g.seat).length;
-  if(seatCount(n)+incoming>10){$('moveStatus').textContent='This table does not have enough available seats.';$('moveStatus').className='statusline error';return}
- }
- guests.forEach(g=>{if(selected.has(idKey(g)))g.t=n});
- selected.clear();markDirty();
- $('moveStatus').textContent=toUnassigned?'Selected guests moved to Unassigned Guests. Changes remain in this session.':'Selected guests moved successfully. Changes remain in this session.';
- $('moveStatus').className='statusline';
+function unassignSelected(){
+ if(!selected.size)return;
+ guests.forEach(g=>{if(selected.has(idKey(g)))g.t=null});
+ selected.clear();markDirty();$('moveStatus').textContent='Selected guests moved to Unassigned Guests. Changes remain in this session.';$('moveStatus').className='statusline';
  refresh();
 }
+
 function deleteSelected(allPartyMembers){
  const chosen=selectedGuests(),ids=new Set(allPartyMembers?chosen.map(g=>g.party):chosen.map(g=>g.id));
  guests=guests.filter(g=>allPartyMembers?!ids.has(g.party):!ids.has(g.id));
@@ -537,7 +781,7 @@ async function login(){
   const {data,error}=await supabaseClient.auth.signInWithPassword({email:ADMIN_EMAIL,password});
   if(error) throw error;
   supabaseSession=data.session;
-  viewState='editing';$('password').value='';$('loginError').textContent='';
+  viewState='editing';activeAdminView='seating';$('password').value='';$('loginError').textContent='';
   refresh();
  }catch(error){
   console.error('Administrator login failed:',error);
@@ -546,17 +790,10 @@ async function login(){
 }
 $('login').onclick=login;$('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 $('search').oninput=refresh;
-$('remarksButton').onclick=()=>{
- if(remarkDirty){
-  remarkDirty=false;showRemarks=true;markDirty();
-  $('commitStatus').textContent='Guest names and seat remarks saved to this editing session. Select Save & Exit to commit them to Supabase.';
- }else showRemarks=!showRemarks;
- refresh();
-};
+
 $('selectAllUnassigned').onclick=()=>{const visible=unassigned().filter(matches);const all=visible.length>0&&visible.every(g=>selected.has(idKey(g)));visible.forEach(g=>all?selected.delete(idKey(g)):selected.add(idKey(g)));refresh()};
 $('clearMove').onclick=()=>{selected.clear();refresh()};
-$('move').onclick=moveSelected;
-$('destination').onchange=()=>{render()};
+$('unassignSelectedOld').onclick=unassignSelected;
 $('delete').onclick=()=>{
  const chosen=selectedGuests();
  const list=chosen.map(g=>`<div class="small">${esc(g.name)} — ${g.t===null?'Unassigned':'Table '+String(g.t).padStart(2,'0')}</div>`).join('');
@@ -581,11 +818,13 @@ $('saveExit').onclick=()=>{
  refresh();
 };
 $('returnToEditing').onclick=()=>{
- viewState='editing';selected.clear();refresh();
+ viewState='editing';activeAdminView='seating';selected.clear();refresh();
 };
 // In this standalone prototype, Save & Exit simulates a successful database commit.
 // The production implementation must replace this local assignment with one atomic Supabase transaction.
 $('saveAndExit').onclick=async()=>{
+ const overCapacity=tables.map(n=>({n,count:seatCount(n)})).filter(x=>x.count>10);
+ if(overCapacity.length){$('commitStatus').textContent='Cannot save yet. Reduce these tables to 10 seats or fewer: '+overCapacity.map(x=>'Table '+String(x.n).padStart(2,'0')+' ('+x.count+'/10)').join(', ')+'.';$('commitStatus').className='statusline error';return;}
  const button=$('saveAndExit');
  button.disabled=true;button.textContent='Saving...';
  try{
@@ -612,6 +851,144 @@ $('discardChangesBtn').onclick=()=>{
  };
  $('cancelDiscard').onclick=()=>$('modalRoot').innerHTML='';
 };
+// Seating Arrangement workspace interactions.
+const LEFT_ROWS=[[2,4,6],[8,10,12],[14,16,18],[20,null,null]];
+const RIGHT_ROWS=[[5,3,1],[11,9,7],[17,15,13],[null,21,19]];
+function tableCardHTML(n){
+ if(!n)return '<div aria-hidden="true"></div>';
+ const rows=guests.filter(g=>g.t===n),seats=rows.filter(g=>g.seat).length,over=seats>10;
+ const editing=isEditing(),allSelected=rows.length>0&&rows.every(g=>selected.has(idKey(g)));
+ return `<div class="seat-table ${over?'over-capacity':''}" data-drop-table="${n}">
+  <div class="seat-table-head"><span class="seat-table-title">TABLE ${String(n).padStart(2,'0')}</span>${editing?`<button class="table-drag-handle" type="button" draggable="true" data-drag-table="${n}" title="Drag to swap this table's guest assignments" aria-label="Drag Table ${n} to swap assignments">⠿</button>`:''}</div>
+  <div class="seat-count-line"><strong>${seats}/10 seats</strong> | ${rows.length}/10 guests</div>
+  ${editing?`<div class="seat-table-actions"><button type="button" class="btn secondary table-select-all-seat" data-table="${n}" ${rows.length===0?'disabled':''}>${allSelected?'Deselect All':'Select All'}</button></div>`:''}
+  <div class="seat-guest-list">${rows.map(g=>`<div class="seat-guest ${editing&&selected.has(idKey(g))?'selected':''}" ${editing?`data-guest-row="${esc(g.id)}"`:''}>${editing?`<input type="checkbox" class="seat-pick" data-id="${esc(g.id)}" aria-label="Select ${esc(g.name)}" ${selected.has(idKey(g))?'checked':''}>`:''}<span class="seat-guest-name" ${editing?`data-open-guest="${esc(g.id)}"`:''}>${esc(g.name)}</span>${editing?`<button class="guest-drag-handle" type="button" draggable="true" data-drag-guest="${esc(g.id)}" title="Drag guest or selected guests" aria-label="Drag ${esc(g.name)}">⠿</button>`:''}</div>`).join('')||'<div class="seat-empty">No guests assigned</div>'}</div>
+  ${editing&&over?'<div class="seating-warning">Temporary capacity warning</div>':''}
+ </div>`;
+}
+function publicTableCardHTML(n){
+ if(!n)return '<div aria-hidden="true"></div>';
+ const rows=guests.filter(g=>g.t===n),seats=rows.filter(g=>g.seat).length;
+ return `<div class="seat-table public-seat-table">
+  <div class="seat-table-head"><span class="seat-table-title">TABLE ${String(n).padStart(2,'0')}</span></div>
+  <div class="seat-count-line"><strong>${seats}/10 seats</strong> | ${rows.length}/10 guests</div>
+  <div class="seat-guest-list">${rows.map(g=>`<div class="seat-guest"><span class="seat-guest-name">${esc(g.name)}</span></div>`).join('')||'<div class="seat-empty">No guests assigned</div>'}</div>
+ </div>`;
+}
+function renderPublicFloorplan(){
+ $('floorLeftPublic').innerHTML=LEFT_ROWS.flat().map(publicTableCardHTML).join('');
+ $('floorRightPublic').innerHTML=RIGHT_ROWS.flat().map(publicTableCardHTML).join('');
+}
+function renderSeating(){
+ if(!isEditing())return;
+ $('floorLeft').innerHTML=LEFT_ROWS.flat().map(tableCardHTML).join('');
+ $('floorRight').innerHTML=RIGHT_ROWS.flat().map(tableCardHTML).join('');
+ const ua=unassigned();$('seatingUnassignedCount').textContent=ua.length+' guests';
+ const allUa=ua.length>0&&ua.every(g=>selected.has(idKey(g)));$('selectAllSeatingUnassigned').textContent=allUa?'Deselect All':'Select All';$('selectAllSeatingUnassigned').disabled=ua.length===0;
+ $('deselectSelectedBtn').disabled=selected.size===0;
+ const assignedSelected=guests.filter(g=>g.t!==null&&selected.has(idKey(g)));
+ const unassignedSelected=ua.filter(g=>selected.has(idKey(g)));
+ $('deleteSeatingSelectedBtn').disabled=assignedSelected.length===0;
+ $('deleteUnassignedSelectedBtn').disabled=unassignedSelected.length===0;
+ $('seatingUnassignedList').innerHTML=ua.map(g=>isEditing()?`<span class="unassigned-chip ${selected.has(idKey(g))?'selected':''}"><input type="checkbox" class="seat-pick" data-id="${esc(g.id)}" ${selected.has(idKey(g))?'checked':''}><span>${esc(g.name)}</span><button class="guest-drag-handle" type="button" draggable="true" data-drag-guest="${esc(g.id)}" title="Drag guest or selected guests">⠿</button></span>`:`<span class="unassigned-chip"><span>${esc(g.name)}</span></span>`).join('')||'<span class="small">No unassigned guests.</span>';
+ const selectionStatus=$('seatingSelectionStatus');
+ selectionStatus.textContent=selected.size?selected.size+' guest(s) selected':'No guests selected';
+  const selectionMirror=$('seatingSelectionStatusHidden');
+  if(selectionMirror){selectionMirror.textContent=selected.size?selected.size+' guest(s) selected':'No guests selected';selectionMirror.className='status '+(selected.size?'':'clean')}
+ selectionStatus.className='status '+(selected.size?'':'clean');
+ $('unassignSelectedBtn').disabled=!selected.size;
+ bindSeatingEvents();
+ if(detailGuestId&&!guests.some(g=>idKey(g)===String(detailGuestId)))detailGuestId=null;
+ renderGuestDetails();
+}
+function openGuestDetails(id){const next=String(id);detailGuestId=detailGuestId===next?null:next;renderGuestDetails();}
+function renderGuestDetails(){
+ const panel=$('guestDetailsPanel');if(!panel)return;
+ const g=guests.find(x=>idKey(x)===String(detailGuestId));
+ if(!g){panel.innerHTML='<h3>Guest Details</h3><div class="details-empty">Select a guest name to view or edit their details.</div>';return;}
+ panel.innerHTML=`<h3>Guest Details</h3><div class="small">Edits remain staged until Save &amp; Exit.</div>
+  <div class="detail-field"><label for="detailName">FULL NAME</label><input id="detailName" value="${esc(g.name)}"></div>
+  <div class="detail-field"><label for="detailType">GUEST TYPE</label><select id="detailType"><option value="Adult" ${g.type==='Adult'?'selected':''}>Adult</option><option value="Child" ${g.type==='Child'?'selected':''}>Child</option></select></div>
+  <div class="detail-field"><label><input id="detailSeat" type="checkbox" ${g.seat?'checked':''}> Requires a seat</label></div>
+  <div class="detail-field"><label for="detailRemarks">SEAT REMARKS / CLASSIFICATION</label><textarea id="detailRemarks" placeholder="VIP / Elderly / Child / Others">${esc(g.r||'')}</textarea></div>
+  <div class="detail-field"><label>CURRENT ASSIGNMENT</label><div class="small">${g.t===null?'Unassigned':'Table '+String(g.t).padStart(2,'0')}</div></div>
+  <div class="detail-actions"><button class="btn secondary" id="closeGuestDetails">Close</button></div>`;
+ const name=$('detailName'),type=$('detailType'),seat=$('detailSeat'),remarks=$('detailRemarks');
+ name.oninput=()=>{g.name=name.value;markDirty();refreshSeatingOnly()};
+ type.onchange=()=>{g.type=type.value;markDirty();refreshSeatingOnly()};
+ seat.onchange=()=>{g.seat=seat.checked;markDirty();refreshSeatingOnly()};
+ remarks.oninput=()=>{g.r=remarks.value;markDirty();refreshSeatingOnly()};
+ $('closeGuestDetails').onclick=()=>{detailGuestId=null;renderGuestDetails()};
+}
+function refreshSeatingOnly(){
+ // Capture the active editor before rebuilding the seating view.
+ const active=document.activeElement,id=active?.id,selectionStart=active?.selectionStart,selectionEnd=active?.selectionEnd;
+ renderSeating();
+ if(id&&$(id)){ $(id).focus();try{$(id).setSelectionRange(selectionStart,selectionEnd)}catch(e){} }
+}
+function moveGuestIds(ids,destination){
+ const moving=guests.filter(g=>ids.includes(idKey(g)));
+ if(destination!==null){const incoming=moving.filter(g=>g.t!==destination&&g.seat).length;const projected=seatCount(destination)+incoming;
+  if(projected>25){$('commitStatus').textContent=`Cannot move these guests. Table ${String(destination).padStart(2,'0')} would exceed the temporary limit of 25 seats.`;$('commitStatus').className='statusline error';return false;}
+ }
+ moving.forEach(g=>g.t=destination);selected.clear();markDirty();render();renderSeating();return true;
+}
+function swapTables(a,b){if(a===b)return;guests.forEach(g=>{if(g.t===a)g.t=-999;if(g.t===b)g.t=a});guests.forEach(g=>{if(g.t===-999)g.t=b});selected.clear();markDirty();render();renderSeating();}
+function confirmDeleteGuests(guestRows, scopeLabel){
+ if(!guestRows.length)return;
+ const ids=new Set(guestRows.map(g=>idKey(g)));
+ const names=guestRows.map(g=>`<div class="small">${esc(g.name)}</div>`).join('');
+ modal('Delete Selected Guests?',`<p class="small">The following ${guestRows.length} guest entr${guestRows.length===1?'y':'ies'} will be deleted from this editing session (${scopeLabel}).</p>${names}`,
+  `<button class="btn danger" id="confirmDeleteSeatingGuests">Delete Selected</button><button class="btn secondary" id="cancelDeleteSeatingGuests">Cancel</button>`);
+ $('confirmDeleteSeatingGuests').onclick=()=>{
+  guests=guests.filter(g=>!ids.has(idKey(g)));
+  if(detailGuestId&&ids.has(String(detailGuestId)))detailGuestId=null;
+  ids.forEach(id=>selected.delete(id));markDirty();$('modalRoot').innerHTML='';render();renderSeating();
+ };
+ $('cancelDeleteSeatingGuests').onclick=()=>$('modalRoot').innerHTML='';
+}
+function bindSeatingEvents(){
+ document.querySelectorAll('.seat-pick').forEach(el=>el.onchange=()=>{const id=String(el.dataset.id);el.checked?selected.add(id):selected.delete(id);renderSeating();});
+ document.querySelectorAll('.table-select-all-seat').forEach(button=>button.onclick=()=>{const n=Number(button.dataset.table),rows=guests.filter(g=>g.t===n);const all=rows.length>0&&rows.every(g=>selected.has(idKey(g)));rows.forEach(g=>all?selected.delete(idKey(g)):selected.add(idKey(g)));renderSeating();});
+ $('deleteSeatingSelectedBtn').onclick=()=>{
+  const assigned=guests.filter(g=>g.t!==null&&selected.has(idKey(g)));
+  confirmDeleteGuests(assigned,'assigned tables only');
+ };
+ $('deleteUnassignedSelectedBtn').onclick=()=>{
+  const unassignedOnly=guests.filter(g=>g.t===null&&selected.has(idKey(g)));
+  confirmDeleteGuests(unassignedOnly,'Unassigned Guests only');
+ };
+ document.querySelectorAll('#seatingWorkspace [data-open-guest]').forEach(el=>el.onclick=()=>openGuestDetails(el.dataset.openGuest));
+ document.querySelectorAll('[data-drag-guest]').forEach(el=>{
+  el.ondragstart=e=>{const id=String(el.dataset.dragGuest);if(!selected.has(id)){selected.clear();selected.add(id)}const ids=selectedGuests().map(idKey);e.dataTransfer.setData('text/plain',JSON.stringify({kind:'guests',ids}));e.dataTransfer.effectAllowed='move';};
+ });
+ document.querySelectorAll('[data-drag-table]').forEach(el=>el.ondragstart=e=>{e.dataTransfer.setData('text/plain',JSON.stringify({kind:'table',table:Number(el.dataset.dragTable)}));e.dataTransfer.effectAllowed='move'});
+ document.querySelectorAll('[data-drop-table]').forEach(el=>{
+  el.ondragover=e=>{e.preventDefault();el.classList.add('drop-target')};el.ondragleave=()=>el.classList.remove('drop-target');
+  el.ondrop=e=>{e.preventDefault();el.classList.remove('drop-target');let payload;try{payload=JSON.parse(e.dataTransfer.getData('text/plain'))}catch(_){return}
+   const target=Number(el.dataset.dropTable);
+   if(payload.kind==='table')swapTables(Number(payload.table),target);
+   else if(payload.kind==='guests')moveGuestIds(payload.ids,target);
+  };
+ });
+ document.querySelectorAll('#seatingUnassignedList [data-drag-guest]').forEach(el=>{});
+ const ua=$('seatingUnassignedList');ua.ondragover=e=>e.preventDefault();ua.ondrop=e=>{e.preventDefault();let p;try{p=JSON.parse(e.dataTransfer.getData('text/plain'))}catch(_){return}if(p.kind==='guests')moveGuestIds(p.ids,null)};
+}
+$('unassignSelectedBtn').onclick=unassignSelected;
+$('unassignSelectedOld').onclick=unassignSelected;
+$('deselectSelectedBtn').onclick=()=>{selected.clear();renderSeating()};
+$('selectAllSeatingUnassigned').onclick=()=>{const ua=unassigned(),all=ua.length>0&&ua.every(g=>selected.has(idKey(g)));ua.forEach(g=>all?selected.delete(idKey(g)):selected.add(idKey(g)));renderSeating()};
+function setDetailsSidebarHidden(hidden){
+ const layout=$('seatingLayout'),workspace=$('seatingWorkspace');
+ layout.classList.toggle('sidebar-hidden',hidden);
+ workspace.classList.toggle('sidebar-is-hidden',hidden);
+ $('toggleDetailsSidebar').textContent='Hide Guest Details';
+ $('toggleDetailsSidebar').setAttribute('aria-expanded',String(!hidden));
+ $('showDetailsSidebar').setAttribute('aria-expanded',String(!hidden));
+}
+$('toggleDetailsSidebar').onclick=()=>setDetailsSidebarHidden(true);
+$('showDetailsSidebar').onclick=()=>setDetailsSidebarHidden(false);
+
 // Load the saved guest directory on every page visit or browser refresh.
 setDirectoryStatus('loading','Loading guest directory');
 (async()=>{
