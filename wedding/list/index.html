@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Great+Vibes&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<title>Wedding Guest List · Development v3</title>
+<title>Wedding Guest List · Development v21</title>
 <style>
 :root{
  --bg:#151a21;--panel:#202833;--panel2:#252f3b;--card:#202a35;--card2:#293542;
@@ -87,6 +87,11 @@ textarea{min-height:86px;resize:vertical}
 #printRoot{display:none}
 @media(max-width:900px){.tables{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:580px){body{padding:12px 8px 28px}.hero{padding:20px 14px 18px}.eyebrow{font-size:9px;letter-spacing:.16em;margin-bottom:7px}h1{font-size:clamp(34px,10vw,54px);line-height:.98}.panel{padding:12px}.tables{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.table-card{padding:8px}.stats{gap:6px}.stat{padding:8px}.stat strong{font-size:19px}.unassigned-list{grid-template-columns:1fr}.section-head{align-items:flex-start}.toolbar{align-items:stretch}.toolbar>*{flex:1}.toolbar .spacer{display:none}}
+
+@media print{
+ .print-floorplan-page .table-head-controls{display:none!important}
+}
+
 @media print{
  @page{size:A4 landscape;margin:0}
  html,body{width:297mm!important;height:auto!important;margin:0!important;padding:0!important;background:#fff!important;color:#17212b!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -189,8 +194,13 @@ textarea{min-height:86px;resize:vertical}
 .detail-field{display:grid;gap:5px;margin-top:11px}
 .detail-field label{font-size:10px;color:#aebbc7;font-weight:700}
 .detail-field input,.detail-field select,.detail-field textarea{font-size:11px;padding:8px}
-.detail-field textarea{min-height:70px}
+.detail-field textarea{height:40px;min-height:40px;resize:vertical;box-sizing:border-box}
 .detail-actions{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.detail-assignment-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:11px;flex-wrap:nowrap}
+.detail-assignment-info{display:grid;gap:5px;min-width:0}
+.detail-assignment-info label{font-size:10px;color:#aebbc7;font-weight:700}
+.detail-assignment-info .small{font-size:11px;color:var(--muted)}
+.detail-assignment-row .detail-actions{margin:0;flex-shrink:0}
 .seating-unassigned{margin-top:12px;background:#1b2530;border:1px solid #3d4b59;border-radius:12px;padding:12px}
 .seating-unassigned-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .unassigned-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid #465565;border-radius:7px;background:#263441;font-size:10px;max-width:100%}
@@ -242,6 +252,39 @@ textarea{min-height:86px;resize:vertical}
 
  @media print{
   @page{size:A3 landscape;margin:7mm}
+  /* Full List PDF: use the entire A3 landscape printable area. */
+  .print-floorplan-page:not(.print-side-page){
+    width:406mm!important;
+    max-width:406mm!important;
+    min-width:406mm!important;
+    margin:0!important;
+    padding:2mm 3mm!important;
+    box-sizing:border-box!important;
+  }
+  .print-floorplan-page:not(.print-side-page) .floorplan{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    box-sizing:border-box!important;
+  }
+  .print-floorplan-page:not(.print-side-page) .print-floor-main{
+    display:grid!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 8mm minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)!important;
+    column-gap:3mm!important;
+    box-sizing:border-box!important;
+  }
+  .print-floorplan-page:not(.print-side-page) .floorplan-top,
+  .print-floorplan-page:not(.print-side-page) .floor-feature.dance{
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+  }
   html,body{width:420mm!important;height:auto!important;margin:0!important;padding:0!important}
   #printRoot{display:block!important;width:100%!important;padding:0!important;margin:0!important}
   .print-floorplan-page{display:block!important;width:100%;height:282mm;box-sizing:border-box;overflow:hidden;background:#fff;color:#17212b;padding:2mm 3mm;break-after:page;page-break-after:always}
@@ -320,7 +363,38 @@ textarea{min-height:86px;resize:vertical}
   }
  }
 
-.sidebar-status-group{position:relative;display:flex;justify-content:flex-start;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:0}
+
+@page side-pdf{size:A4 portrait;margin:7mm}
+@media print{
+ html,body{width:210mm!important;height:auto!important;margin:0!important;padding:0!important}
+ #printRoot{width:196mm!important;max-width:196mm!important;margin:0 auto!important}
+ .print-side-page{page:side-pdf!important;width:196mm!important;height:283mm!important;min-height:283mm!important;max-height:283mm!important;box-sizing:border-box!important;overflow:hidden!important;padding:2mm 3mm!important;break-after:page!important;page-break-after:always!important}
+ .print-side-page:last-child{break-after:auto!important;page-break-after:auto!important}
+ .print-side-page .hero{display:block!important;background:#fff!important;color:#17212b!important;padding:0 0 4mm!important;margin:0 0 5mm!important;text-align:center!important;border-bottom:1px solid #cbd3db!important}
+ .print-side-page .hero .eyebrow,.print-side-page .hero .sub{color:#344454!important}
+ .print-side-page .hero h1{color:#17212b!important;font-size:22pt!important;margin:0!important}
+ .print-side-page .print-heading{font-size:12pt!important;color:#17212b!important;text-align:center!important;margin:0 0 4mm!important}
+ .print-side-page .floorplan{background:#fff!important;border:0!important;padding:0!important;margin:0!important}
+ .print-side-page .floorplan-top{margin:0 0 3mm!important}
+ .print-side-page .floor-feature{background:#e8edf2!important;color:#17212b!important;border-color:#9eabb8!important}
+ .print-side-page .floor-feature.stage{background:#dce5ee!important;min-width:38%!important;padding:2.5mm!important}
+ .print-side-page .floor-feature.dance{padding:2mm!important;margin-bottom:3mm!important}
+ .print-side-page .side-print-main{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr)) 7mm!important;grid-template-rows:repeat(2,minmax(0,1fr))!important;column-gap:2.5mm!important;row-gap:3mm!important;align-items:stretch!important;height:190mm!important;min-height:190mm!important}
+ .print-side-page.right-side .side-print-main{grid-template-columns:7mm repeat(3,minmax(0,1fr))!important}
+ .print-side-page .seat-table{background:#f8fafc!important;border:1px solid #aebbc7!important;color:#17212b!important;min-width:0!important;min-height:0!important;height:100%!important;box-sizing:border-box!important;padding:2mm!important;overflow:visible!important;align-self:stretch!important}
+ .print-side-page .seat-table-title{color:#17212b!important;font-size:8pt!important}
+ .print-side-page .seat-count-line{font-size:6.2pt!important;color:#344454!important;white-space:nowrap!important}
+ .print-side-page .seat-guest-list{gap:0!important;overflow:visible!important}
+ .print-side-page .seat-guest{border-color:#d8e0e7!important;padding:.8mm 0!important;overflow:visible!important}
+ .print-side-page .seat-guest-name{font-size:6pt!important;line-height:1.12!important;color:#17212b!important;display:block!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ .print-side-page .seat-empty{color:#64748b!important}
+ .print-side-page .red-carpet{background:#8d4149!important;color:#fff!important;border-color:#632e36!important;width:100%!important;min-height:100%!important;height:100%!important}
+ .print-side-page .floor-center{min-height:100%!important;height:100%!important}
+ .print-side-page .seat-table-actions,.print-side-page .seat-pick,.print-side-page .table-drag-handle,.print-side-page .guest-drag-handle,.print-side-page .seating-warning,.print-side-page .floor-legend{display:none!important}
+}
+
+.sidebar-status-group{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:center;gap:8px;margin-bottom:0;text-align:center}
+.sidebar-status-group .status{justify-self:center;text-align:center;max-width:100%}
 .seating-right-column{position:sticky;top:12px;align-self:start;height:max-content}
 @media(max-width:980px){.seating-right-column{position:static}}
 
@@ -330,6 +404,74 @@ textarea{min-height:86px;resize:vertical}
 .sidebar-hidden-statuses{display:none;align-items:center;gap:8px;flex-wrap:wrap}
 #seatingWorkspace.sidebar-is-hidden .sidebar-reopen{display:inline-flex}
 #seatingWorkspace.sidebar-is-hidden .sidebar-hidden-statuses{display:flex}
+
+
+
+/* Release v2 floorplan view and locking controls */
+.arrangement-toolbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.side-lock-controls{display:flex;gap:6px;flex-wrap:wrap}
+.side-lock-controls .btn{font-size:11px;padding:6px 9px}
+.floorplan.view-left .floor-main,.public-floorplan.view-left .floor-main{grid-template-columns:repeat(3,minmax(0,1fr)) 18px;column-gap:7px}
+.floorplan.view-right .floor-main,.public-floorplan.view-right .floor-main{grid-template-columns:18px repeat(3,minmax(0,1fr));column-gap:7px}
+.floorplan.view-left #floorRight,.public-floorplan.view-left #floorRightPublic,
+.floorplan.view-right #floorLeft,.public-floorplan.view-right #floorLeftPublic{display:none}
+.floorplan.view-left .floor-center,.public-floorplan.view-left .floor-center{grid-column:4}
+.floorplan.view-right .floor-center,.public-floorplan.view-right .floor-center{grid-column:1}
+.floorplan.view-right #floorRight>:nth-child(1),.public-floorplan.view-right #floorRightPublic>:nth-child(1){grid-column:2}
+.floorplan.view-right #floorRight>:nth-child(2),.public-floorplan.view-right #floorRightPublic>:nth-child(2){grid-column:3}
+.floorplan.view-right #floorRight>:nth-child(3),.public-floorplan.view-right #floorRightPublic>:nth-child(3){grid-column:4}
+.floorplan.view-right #floorRight>:nth-child(4),.public-floorplan.view-right #floorRightPublic>:nth-child(4){grid-column:2}
+.floorplan.view-right #floorRight>:nth-child(5),.public-floorplan.view-right #floorRightPublic>:nth-child(5){grid-column:3}
+.floorplan.view-right #floorRight>:nth-child(6),.public-floorplan.view-right #floorRightPublic>:nth-child(6){grid-column:4}
+.floorplan.view-right #floorRight>:nth-child(7),.public-floorplan.view-right #floorRightPublic>:nth-child(7){grid-column:2}
+.floorplan.view-right #floorRight>:nth-child(8),.public-floorplan.view-right #floorRightPublic>:nth-child(8){grid-column:3}
+.floorplan.view-right #floorRight>:nth-child(9),.public-floorplan.view-right #floorRightPublic>:nth-child(9){grid-column:4}
+.floorplan.view-right #floorRight>:nth-child(10),.public-floorplan.view-right #floorRightPublic>:nth-child(10){grid-column:2}
+.floorplan.view-right #floorRight>:nth-child(11),.public-floorplan.view-right #floorRightPublic>:nth-child(11){grid-column:3}
+.floorplan.view-right #floorRight>:nth-child(12),.public-floorplan.view-right #floorRightPublic>:nth-child(12){grid-column:4}
+.floorplan.view-left .floor-feature.stage,.floorplan.view-right .floor-feature.stage,
+.public-floorplan.view-left .floor-feature.stage,.public-floorplan.view-right .floor-feature.stage{min-width:65%}
+.floorplan.view-left .floor-feature.dance,.floorplan.view-right .floor-feature.dance,
+.public-floorplan.view-left .floor-feature.dance,.public-floorplan.view-right .floor-feature.dance{width:55%!important}
+.table-lock-button{border:0;background:transparent;color:#b9c8d5;cursor:pointer;padding:2px 4px;font-size:14px;line-height:1}
+.table-lock-button:hover{color:#fff;background:#ffffff12;border-radius:5px}
+.table-lock-button:disabled{opacity:.45;cursor:not-allowed}
+.seat-table.is-locked{border-color:#9b7a54;background:linear-gradient(160deg,#30343a,#252c33)}
+.seat-table.is-locked .seat-guest-name{cursor:default}
+.seat-table.is-locked .seat-pick{opacity:.35;pointer-events:none}
+.seat-table.is-locked .guest-drag-handle,.seat-table.is-locked .table-drag-handle{opacity:.3;pointer-events:none}
+@media(max-width:620px){
+ .arrangement-toolbar{justify-content:flex-start}
+ .arrangement-toolbar #cycleFloorView{flex:1;min-width:145px}
+ .side-lock-controls{width:100%}
+ .side-lock-controls .btn{flex:1}
+ .floorplan.view-left .floor-main,.public-floorplan.view-left .floor-main,
+ .floorplan.view-right .floor-main,.public-floorplan.view-right .floor-main{column-gap:5px}
+}
+
+
+/* Development v26: paired status alignment and corrected assignment layout */
+.arrangement-toolbar #cycleFloorView{min-width:145px}
+.sidebar-floor-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sidebar-control{min-width:0;border:1px solid var(--line);border-radius:10px;padding:7px;background:#1b2530;display:grid;grid-template-rows:auto auto;align-content:start;gap:5px}
+.sidebar-control .btn{width:100%;min-width:0;min-height:36px;padding:7px 5px;font-size:13px;white-space:nowrap}
+.sidebar-control-state{font-size:11px;line-height:1.25;font-weight:400;color:var(--muted);text-align:center;overflow-wrap:anywhere;min-height:14px}
+.seating-right-column .sidebar-toggle{justify-self:end;width:max-content;max-width:100%;margin:0}
+.seating-right-column .seating-actions{order:0}
+.seating-right-column .guest-details-panel{order:0}
+.seating-right-column{gap:10px}
+#seatingWorkspace .sidebar-floor-controls{display:grid}
+#seatingWorkspace.sidebar-is-hidden .sidebar-floor-controls{display:none}
+#seatingWorkspace.admin-editing .arrangement-toolbar #cycleFloorView{display:none}
+@media(max-width:980px){
+ .seating-right-column{position:sticky;top:8px}
+}
+@media(max-width:360px){
+ .sidebar-floor-controls{gap:6px}
+ .sidebar-control{padding:6px}
+ .sidebar-control .btn{font-size:12px}
+ .sidebar-control-state{font-size:10px}
+}
 
 </style>
 </head>
@@ -350,7 +492,10 @@ textarea{min-height:86px;resize:vertical}
 <section class="panel">
  <div class="section-head table-arrangement-heading">
   <h2>Table Arrangement</h2>
-  <div class="toolbar"><span class="small">21 Tables</span></div>
+  <div class="toolbar arrangement-toolbar">
+   <span class="small">21 Tables</span>
+   <button type="button" class="btn secondary" id="cycleFloorView">Toggle View</button>
+  </div>
  </div>
  <div id="tableToolbar" class="toolbar hidden" style="justify-content:flex-end;margin:-2px 0 12px"></div>
  <div id="seatingWorkspace">
@@ -361,7 +506,7 @@ textarea{min-height:86px;resize:vertical}
   <div class="sidebar-reopen-row">
    <div class="sidebar-hidden-statuses" id="sidebarHiddenStatuses">
     <span class="status clean" id="seatingSelectionStatusHidden">No guests selected</span>
-    <span class="status clean" id="sessionStatusHidden">No pending changes</span>
+    <span class="status clean" id="sessionStatusHidden">No changes</span>
    </div>
    <button type="button" class="btn secondary sidebar-reopen" id="showDetailsSidebar" aria-expanded="false">Show Guest Details</button>
   </div>
@@ -379,7 +524,22 @@ textarea{min-height:86px;resize:vertical}
     </div>
     <div class="seating-unassigned"><div class="section-head"><h3 style="margin:0">Unassigned Guests</h3><div class="seating-actions"><button type="button" class="btn secondary" id="selectAllSeatingUnassigned" disabled>Select All</button><button type="button" class="btn danger" id="deleteUnassignedSelectedBtn" disabled>Delete Selected</button></div></div><div class="small" id="seatingUnassignedCount">0 guests</div><div class="seating-unassigned-list" id="seatingUnassignedList"></div></div>
    </div>
-   <div class="seating-right-column"><div class="seating-status-group sidebar-status-group"><span class="status clean" id="seatingSelectionStatus">No guests selected</span><span class="status clean" id="sessionStatus">No pending changes</span></div><button type="button" class="btn secondary sidebar-toggle" id="toggleDetailsSidebar" aria-expanded="true">Hide Guest Details</button><aside class="seating-sidepanel" id="guestDetailsPanel"><h3>Guest Details</h3><div class="details-empty">Select a guest name to view or edit their details.</div></aside><div class="seating-actions"><button type="button" class="btn secondary" id="unassignSelectedBtn" disabled>Unassign Selected</button><button type="button" class="btn secondary" id="deselectSelectedBtn" disabled>Deselect Selected</button><button type="button" class="btn danger" id="deleteSeatingSelectedBtn" disabled>Delete Selected</button></div></div>
+   <div class="seating-right-column">
+    <div class="seating-status-group sidebar-status-group"><span class="status clean" id="seatingSelectionStatus">No guests selected</span><span class="status clean" id="sessionStatus">No changes</span></div>
+    <div class="sidebar-floor-controls" id="sidebarFloorControls">
+     <div class="sidebar-control">
+      <button type="button" class="btn secondary" id="cycleFloorViewSidebar">Toggle View</button>
+      <div class="sidebar-control-state" id="floorViewStateSidebar">Full Floorplan</div>
+     </div>
+     <div class="sidebar-control">
+      <button type="button" class="btn secondary" id="toggleLockCycle"><span class="lock-symbol">🔓</span> Toggle Lock</button>
+      <div class="sidebar-control-state" id="floorLockState">All Unlocked</div>
+     </div>
+    </div>
+    <div class="seating-actions"><button type="button" class="btn secondary" id="unassignSelectedBtn" disabled>Unassign Selected</button><button type="button" class="btn secondary" id="deselectSelectedBtn" disabled>Deselect Selected</button><button type="button" class="btn danger" id="deleteSeatingSelectedBtn" disabled>Delete Selected</button></div>
+    <aside class="seating-sidepanel" id="guestDetailsPanel"><h3>Guest Details</h3><div class="details-empty">Select a guest name to view or edit their details.</div></aside>
+    <button type="button" class="btn secondary sidebar-toggle" id="toggleDetailsSidebar" aria-expanded="true">Hide Guest Details</button>
+   </div>
   </div>
  </div>
  <div id="publicSeatingWorkspace" class="public-seating-workspace">
@@ -441,7 +601,12 @@ textarea{min-height:86px;resize:vertical}
   </div>
   <div class="subpanel">
    <h3>Administrator Access</h3>
-   <div class="toolbar" style="margin:8px 0"><button id="exportPdf" class="btn secondary" type="button">Export PDF</button></div>
+   <p class="small" style="margin:8px 0 7px">Choose which seating arrangement to export as a PDF.</p>
+   <div class="toolbar pdf-export-buttons" style="margin:8px 0">
+    <button id="exportLeftPdf" class="btn secondary" type="button">Left Side (PDF)</button>
+    <button id="exportPdf" class="btn secondary" type="button">Full List (PDF)</button>
+    <button id="exportRightPdf" class="btn secondary" type="button">Right Side (PDF)</button>
+   </div>
    <p id="adminAccessDescription" class="small">Exiting to View Changes will not permanently save changes, please proceed to "Save &amp; Exit".</p>
    <div id="editingAccessButtons" class="toolbar">
     <button id="saveExit" class="btn save">View Changes</button>
@@ -455,7 +620,7 @@ textarea{min-height:86px;resize:vertical}
   </div>
  </div>
 </section>
-<div class="footer">Development Version 3 · Connected to the existing Supabase project · Save &amp; Exit commits staged changes.</div>
+<div class="footer">Development Version 31 · Based on Release v2 · Connected to the existing Supabase project · Save &amp; Exit commits staged changes.</div>
 </div>
 <div id="modalRoot"></div>
 <div id="printRoot" aria-hidden="true"></div>
@@ -544,6 +709,43 @@ const tags=g=>{
 };
 const matches=g=>g.name.toLowerCase().includes($('search').value.toLowerCase());
 let viewState='public'; // public | editing | savedAdmin
+const FLOOR_VIEW_KEY='weddingFloorplanView';
+const FLOOR_LOCK_KEY='weddingFloorplanLocks';
+let floorView=localStorage.getItem(FLOOR_VIEW_KEY)||'full';
+if(!['full','left','right'].includes(floorView))floorView='full';
+let floorLocks={left:false,right:false,tables:{}};
+try{floorLocks={...floorLocks,...JSON.parse(localStorage.getItem(FLOOR_LOCK_KEY)||'{}')};}catch(e){}
+const sideForTable=n=>[2,4,6,8,10,12,14,16,18,20].includes(Number(n)?Number(n):0)?'left':'right';
+const isTableLocked=n=>!!floorLocks[sideForTable(n)]||!!floorLocks.tables[String(n)];
+function saveFloorLocks(){localStorage.setItem(FLOOR_LOCK_KEY,JSON.stringify(floorLocks));}
+function currentLockState(){
+ if(floorLocks.left&&floorLocks.right)return 'both';
+ if(floorLocks.left)return 'left';
+ if(floorLocks.right)return 'right';
+ return 'none';
+}
+function applyFloorView(){
+ document.querySelectorAll('.floorplan').forEach(el=>{el.classList.toggle('view-left',floorView==='left');el.classList.toggle('view-right',floorView==='right');});
+ const labels={full:'Full Floorplan',left:'Left Only',right:'Right Only'};
+ const state=labels[floorView];
+ ['cycleFloorView','cycleFloorViewSidebar'].forEach(id=>{const btn=$(id);if(btn)btn.textContent='Toggle View';});
+ const header=$('cycleFloorView');
+ if(header)header.title='Current view: '+state;
+ const sidebarState=$('floorViewStateSidebar');if(sidebarState)sidebarState.textContent=state;
+ localStorage.setItem(FLOOR_VIEW_KEY,floorView);
+}
+function updateFloorLockControls(){
+ const admin=isEditing();
+ const controls=$('sidebarFloorControls');if(controls)controls.classList.toggle('hidden',!admin);
+ const state=currentLockState();
+ const labels={none:'All Unlocked',left:'Left Side Locked',right:'Right Side Locked',both:'Both Sides Locked'};
+ const btn=$('toggleLockCycle');if(btn){
+  btn.innerHTML=`<span class="lock-symbol">${state==='none'?'🔓':'🔒'}</span> Toggle Lock`;
+  btn.title='Current lock state: '+labels[state];
+  btn.setAttribute('aria-label','Toggle Lock. Current state: '+labels[state]);
+ }
+ const label=$('floorLockState');if(label)label.textContent=labels[state];
+}
 let activeAdminView='seating';
 let detailGuestId=null;
 const isAdmin=()=>viewState!=='public';
@@ -562,9 +764,9 @@ function tagHTML(g){
 }
 function updateStatus(){
  const el=$('sessionStatus');
- if(el){el.textContent=dirty?'Unsaved session changes':'No pending changes';el.className='status '+(dirty?'':'clean')}
+ if(el){el.textContent=dirty?'Unsaved changes':'No changes';el.className='status '+(dirty?'':'clean')}
   const mirror=$('sessionStatusHidden');
-  if(mirror){mirror.textContent=dirty?'Unsaved session changes':'No pending changes';mirror.className='status '+(dirty?'':'clean')}
+  if(mirror){mirror.textContent=dirty?'Unsaved changes':'No changes';mirror.className='status '+(dirty?'':'clean')}
 }
 function markDirty(){dirty=true;updateStatus();$('commitStatus').textContent=''}
 function tableSelectedCount(){return guests.filter(g=>g.t!==null&&selected.has(idKey(g))).length}
@@ -605,8 +807,11 @@ function render(){
  $('tableToolbar').classList.toggle('hidden',!editing);
  // Admin tabs were removed; the Seating Arrangement workspace is now the sole admin view.
  $('seatingWorkspace').classList.toggle('active',editing);
+ $('seatingWorkspace').classList.toggle('admin-editing',editing);
  $('seatingWorkspace').classList.remove('review-mode');
  $('publicSeatingWorkspace').classList.toggle('active',!editing);
+ $('cycleFloorView').classList.toggle('hidden',editing);
+ updateFloorLockControls();applyFloorView();
  $('tables').classList.add('hidden');
  $('unassignedPanel').classList.add('hidden');
  if(!editing)renderPublicFloorplan();
@@ -620,6 +825,7 @@ function render(){
  $('selectAllUnassigned').textContent=allVisibleSelected?'Deselect All':'Select All';
 
  $('editingTools').classList.toggle('hidden',!editing);
+ updateFloorLockControls();applyFloorView();
  $('editingAccessButtons').classList.toggle('hidden',!editing);
  $('savedAccessButtons').classList.toggle('hidden',viewState!=='savedAdmin');
  $('adminAccessDescription').textContent=editing?'Exiting to View Changes will not permanently save changes, please proceed to "Save & Exit".':'You can return to editing or exit Administrator Mode.';
@@ -702,7 +908,60 @@ function exportGuestListPDF(){
  makePage(2,2,4);
  window.print();
 }
+
+function exportSidePDF(side){
+ const root=$('printRoot');root.innerHTML='';
+ const source=document.querySelector('#seatingWorkspace .floorplan');
+ const hero=document.querySelector('.hero');
+ if(!source)return;
+ const leftMap=new Map([...source.querySelectorAll('#floorLeft .seat-table')].map(c=>[Number(c.dataset.dropTable),c]));
+ const rightMap=new Map([...source.querySelectorAll('#floorRight .seat-table')].map(c=>[Number(c.dataset.dropTable),c]));
+ const rows=side==='left'?[[2,4,6],[8,10,12],[14,16,18],[20,null,null]]:[[5,3,1],[11,9,7],[17,15,13],[null,21,19]];
+ const map=side==='left'?leftMap:rightMap;
+ function makeSidePage(startRow,endRow){
+  const page=document.createElement('section');
+  page.className='print-page print-floorplan-page print-side-page '+(side==='right'?'right-side':'left-side');
+  if(hero)page.append(hero.cloneNode(true));
+  const fp=document.createElement('div');fp.className='floorplan print-fp';
+  if(startRow===0){
+   const top=source.querySelector('.floorplan-top');
+   const dance=source.querySelector('.floor-feature.dance');
+   if(top)fp.append(top.cloneNode(true));
+   if(dance)fp.append(dance.cloneNode(true));
+  }else{
+   const heading=document.createElement('h2');
+   heading.className='print-heading';
+   heading.textContent='Table Arrangement — Continued';
+   page.append(heading);
+  }
+  const main=document.createElement('div');main.className='floor-main side-print-main';
+  for(let r=startRow;r<endRow;r++){
+   for(let c=0;c<3;c++){
+    const tableNo=rows[r][c];
+    if(!tableNo||!map.has(tableNo))continue;
+    const card=map.get(tableNo).cloneNode(true);
+    card.style.gridColumn=String(side==='left'?c+1:c+2);
+    card.style.gridRow=String(r-startRow+1);
+    main.append(card);
+   }
+  }
+  const center=document.createElement('div');center.className='floor-center';
+  const carpet=document.createElement('div');carpet.className='red-carpet';carpet.textContent='RED CARPET';center.append(carpet);
+  center.style.gridColumn=side==='left'?'4':'1';
+  center.style.gridRow=`1 / span ${endRow-startRow}`;
+  main.append(center);
+  fp.append(main);page.append(fp);
+  page.querySelectorAll('.table-drag-handle,.guest-drag-handle,.seat-pick,.seat-table-actions,.seating-warning,.floor-legend').forEach(el=>el.remove());
+  page.querySelectorAll('.seat-table').forEach(card=>card.classList.remove('over-capacity','drop-target'));
+  root.append(page);
+ }
+ makeSidePage(0,2);
+ makeSidePage(2,4);
+ window.print();
+}
 $('exportPdf').addEventListener('click',exportGuestListPDF);
+$('exportLeftPdf').addEventListener('click',()=>exportSidePDF('left'));
+$('exportRightPdf').addEventListener('click',()=>exportSidePDF('right'));
 window.addEventListener('afterprint',()=>{$('printRoot').innerHTML=''});
 function refresh(){render();bindGuestEvents()}
 function modal(title,body,buttons){
@@ -858,11 +1117,12 @@ function tableCardHTML(n){
  if(!n)return '<div aria-hidden="true"></div>';
  const rows=guests.filter(g=>g.t===n),seats=rows.filter(g=>g.seat).length,over=seats>10;
  const editing=isEditing(),allSelected=rows.length>0&&rows.every(g=>selected.has(idKey(g)));
- return `<div class="seat-table ${over?'over-capacity':''}" data-drop-table="${n}">
-  <div class="seat-table-head"><span class="seat-table-title">TABLE ${String(n).padStart(2,'0')}</span>${editing?`<button class="table-drag-handle" type="button" draggable="true" data-drag-table="${n}" title="Drag to swap this table's guest assignments" aria-label="Drag Table ${n} to swap assignments">⠿</button>`:''}</div>
+ const locked=isTableLocked(n);
+ return `<div class="seat-table ${over?'over-capacity':''} ${locked?'is-locked':''}" data-drop-table="${n}">
+  <div class="seat-table-head"><span class="seat-table-title">TABLE ${String(n).padStart(2,'0')}</span>${editing?`<span class="table-head-controls"><button class="table-lock-button" type="button" data-lock-table="${n}" title="${locked?'Unlock':'Lock'} Table ${String(n).padStart(2,'0')}" aria-label="${locked?'Unlock':'Lock'} Table ${String(n).padStart(2,'0')}" ${floorLocks[sideForTable(n)]?'disabled':''}>${locked?'🔒':'🔓'}</button><button class="table-drag-handle" type="button" draggable="${locked?'false':'true'}" data-drag-table="${n}" title="Drag to swap this table's guest assignments" aria-label="Drag Table ${n} to swap assignments" ${locked?'disabled':''}>⠿</button></span>`:''}</div>
   <div class="seat-count-line"><strong>${seats}/10 seats</strong> | ${rows.length}/10 guests</div>
-  ${editing?`<div class="seat-table-actions"><button type="button" class="btn secondary table-select-all-seat" data-table="${n}" ${rows.length===0?'disabled':''}>${allSelected?'Deselect All':'Select All'}</button></div>`:''}
-  <div class="seat-guest-list">${rows.map(g=>`<div class="seat-guest ${editing&&selected.has(idKey(g))?'selected':''}" ${editing?`data-guest-row="${esc(g.id)}"`:''}>${editing?`<input type="checkbox" class="seat-pick" data-id="${esc(g.id)}" aria-label="Select ${esc(g.name)}" ${selected.has(idKey(g))?'checked':''}>`:''}<span class="seat-guest-name" ${editing?`data-open-guest="${esc(g.id)}"`:''}>${esc(g.name)}</span>${editing?`<button class="guest-drag-handle" type="button" draggable="true" data-drag-guest="${esc(g.id)}" title="Drag guest or selected guests" aria-label="Drag ${esc(g.name)}">⠿</button>`:''}</div>`).join('')||'<div class="seat-empty">No guests assigned</div>'}</div>
+  ${editing?`<div class="seat-table-actions"><button type="button" class="btn secondary table-select-all-seat" data-table="${n}" ${rows.length===0||locked?'disabled':''}>${allSelected?'Deselect All':'Select All'}</button></div>`:''}
+  <div class="seat-guest-list">${rows.map(g=>`<div class="seat-guest ${editing&&selected.has(idKey(g))?'selected':''}" ${editing?`data-guest-row="${esc(g.id)}"`:''}>${editing?`<input type="checkbox" class="seat-pick" data-id="${esc(g.id)}" aria-label="Select ${esc(g.name)}" ${selected.has(idKey(g))?'checked':''} ${locked?'disabled':''}>`:''}<span class="seat-guest-name" ${editing&&!locked?`data-open-guest="${esc(g.id)}"`:''}>${esc(g.name)}</span>${editing?`<button class="guest-drag-handle" type="button" draggable="${locked?'false':'true'}" data-drag-guest="${esc(g.id)}" title="Drag guest or selected guests" aria-label="Drag ${esc(g.name)}" ${locked?'disabled':''}>⠿</button>`:''}</div>`).join('')||'<div class="seat-empty">No guests assigned</div>'}</div>
   ${editing&&over?'<div class="seating-warning">Temporary capacity warning</div>':''}
  </div>`;
 }
@@ -878,11 +1138,13 @@ function publicTableCardHTML(n){
 function renderPublicFloorplan(){
  $('floorLeftPublic').innerHTML=LEFT_ROWS.flat().map(publicTableCardHTML).join('');
  $('floorRightPublic').innerHTML=RIGHT_ROWS.flat().map(publicTableCardHTML).join('');
+ applyFloorView();
 }
 function renderSeating(){
  if(!isEditing())return;
  $('floorLeft').innerHTML=LEFT_ROWS.flat().map(tableCardHTML).join('');
  $('floorRight').innerHTML=RIGHT_ROWS.flat().map(tableCardHTML).join('');
+ applyFloorView();updateFloorLockControls();
  const ua=unassigned();$('seatingUnassignedCount').textContent=ua.length+' guests';
  const allUa=ua.length>0&&ua.every(g=>selected.has(idKey(g)));$('selectAllSeatingUnassigned').textContent=allUa?'Deselect All':'Select All';$('selectAllSeatingUnassigned').disabled=ua.length===0;
  $('deselectSelectedBtn').disabled=selected.size===0;
@@ -911,8 +1173,10 @@ function renderGuestDetails(){
   <div class="detail-field"><label for="detailType">GUEST TYPE</label><select id="detailType"><option value="Adult" ${g.type==='Adult'?'selected':''}>Adult</option><option value="Child" ${g.type==='Child'?'selected':''}>Child</option></select></div>
   <div class="detail-field"><label><input id="detailSeat" type="checkbox" ${g.seat?'checked':''}> Requires a seat</label></div>
   <div class="detail-field"><label for="detailRemarks">SEAT REMARKS / CLASSIFICATION</label><textarea id="detailRemarks" placeholder="VIP / Elderly / Child / Others">${esc(g.r||'')}</textarea></div>
-  <div class="detail-field"><label>CURRENT ASSIGNMENT</label><div class="small">${g.t===null?'Unassigned':'Table '+String(g.t).padStart(2,'0')}</div></div>
-  <div class="detail-actions"><button class="btn secondary" id="closeGuestDetails">Close</button></div>`;
+  <div class="detail-assignment-row">
+   <div class="detail-assignment-info"><label>CURRENT ASSIGNMENT</label><div class="small">${g.t===null?'Unassigned':'Table '+String(g.t).padStart(2,'0')}</div></div>
+   <div class="detail-actions"><button class="btn secondary" id="closeGuestDetails">Close</button></div>
+  </div>`;
  const name=$('detailName'),type=$('detailType'),seat=$('detailSeat'),remarks=$('detailRemarks');
  name.oninput=()=>{g.name=name.value;markDirty();refreshSeatingOnly()};
  type.onchange=()=>{g.type=type.value;markDirty();refreshSeatingOnly()};
@@ -928,12 +1192,15 @@ function refreshSeatingOnly(){
 }
 function moveGuestIds(ids,destination){
  const moving=guests.filter(g=>ids.includes(idKey(g)));
+ if(moving.some(g=>g.t!==null&&isTableLocked(g.t))||(destination!==null&&isTableLocked(destination))){
+  $('commitStatus').textContent='This move is blocked because the source or destination table is locked.';$('commitStatus').className='statusline error';return false;
+ }
  if(destination!==null){const incoming=moving.filter(g=>g.t!==destination&&g.seat).length;const projected=seatCount(destination)+incoming;
   if(projected>25){$('commitStatus').textContent=`Cannot move these guests. Table ${String(destination).padStart(2,'0')} would exceed the temporary limit of 25 seats.`;$('commitStatus').className='statusline error';return false;}
  }
  moving.forEach(g=>g.t=destination);selected.clear();markDirty();render();renderSeating();return true;
 }
-function swapTables(a,b){if(a===b)return;guests.forEach(g=>{if(g.t===a)g.t=-999;if(g.t===b)g.t=a});guests.forEach(g=>{if(g.t===-999)g.t=b});selected.clear();markDirty();render();renderSeating();}
+function swapTables(a,b){if(a===b)return;if(isTableLocked(a)||isTableLocked(b)){$('commitStatus').textContent='This table swap is blocked because one or both tables are locked.';$('commitStatus').className='statusline error';return;}guests.forEach(g=>{if(g.t===a)g.t=-999;if(g.t===b)g.t=a});guests.forEach(g=>{if(g.t===-999)g.t=b});selected.clear();markDirty();render();renderSeating();}
 function confirmDeleteGuests(guestRows, scopeLabel){
  if(!guestRows.length)return;
  const ids=new Set(guestRows.map(g=>idKey(g)));
@@ -948,8 +1215,12 @@ function confirmDeleteGuests(guestRows, scopeLabel){
  $('cancelDeleteSeatingGuests').onclick=()=>$('modalRoot').innerHTML='';
 }
 function bindSeatingEvents(){
- document.querySelectorAll('.seat-pick').forEach(el=>el.onchange=()=>{const id=String(el.dataset.id);el.checked?selected.add(id):selected.delete(id);renderSeating();});
- document.querySelectorAll('.table-select-all-seat').forEach(button=>button.onclick=()=>{const n=Number(button.dataset.table),rows=guests.filter(g=>g.t===n);const all=rows.length>0&&rows.every(g=>selected.has(idKey(g)));rows.forEach(g=>all?selected.delete(idKey(g)):selected.add(idKey(g)));renderSeating();});
+ document.querySelectorAll('[data-lock-table]').forEach(btn=>btn.onclick=()=>{
+  const n=Number(btn.dataset.lockTable),side=sideForTable(n);if(floorLocks[side])return;
+  floorLocks.tables[String(n)]=!floorLocks.tables[String(n)];if(floorLocks.tables[String(n)])guests.filter(g=>g.t===n).forEach(g=>selected.delete(idKey(g)));saveFloorLocks();renderSeating();
+ });
+ document.querySelectorAll('.seat-pick:not(:disabled)').forEach(el=>el.onchange=()=>{const id=String(el.dataset.id);el.checked?selected.add(id):selected.delete(id);renderSeating();});
+ document.querySelectorAll('.table-select-all-seat:not(:disabled)').forEach(button=>button.onclick=()=>{const n=Number(button.dataset.table),rows=guests.filter(g=>g.t===n);const all=rows.length>0&&rows.every(g=>selected.has(idKey(g)));rows.forEach(g=>all?selected.delete(idKey(g)):selected.add(idKey(g)));renderSeating();});
  $('deleteSeatingSelectedBtn').onclick=()=>{
   const assigned=guests.filter(g=>g.t!==null&&selected.has(idKey(g)));
   confirmDeleteGuests(assigned,'assigned tables only');
@@ -959,10 +1230,10 @@ function bindSeatingEvents(){
   confirmDeleteGuests(unassignedOnly,'Unassigned Guests only');
  };
  document.querySelectorAll('#seatingWorkspace [data-open-guest]').forEach(el=>el.onclick=()=>openGuestDetails(el.dataset.openGuest));
- document.querySelectorAll('[data-drag-guest]').forEach(el=>{
+ document.querySelectorAll('[data-drag-guest][draggable="true"]').forEach(el=>{
   el.ondragstart=e=>{const id=String(el.dataset.dragGuest);if(!selected.has(id)){selected.clear();selected.add(id)}const ids=selectedGuests().map(idKey);e.dataTransfer.setData('text/plain',JSON.stringify({kind:'guests',ids}));e.dataTransfer.effectAllowed='move';};
  });
- document.querySelectorAll('[data-drag-table]').forEach(el=>el.ondragstart=e=>{e.dataTransfer.setData('text/plain',JSON.stringify({kind:'table',table:Number(el.dataset.dragTable)}));e.dataTransfer.effectAllowed='move'});
+ document.querySelectorAll('[data-drag-table][draggable="true"]').forEach(el=>el.ondragstart=e=>{e.dataTransfer.setData('text/plain',JSON.stringify({kind:'table',table:Number(el.dataset.dragTable)}));e.dataTransfer.effectAllowed='move'});
  document.querySelectorAll('[data-drop-table]').forEach(el=>{
   el.ondragover=e=>{e.preventDefault();el.classList.add('drop-target')};el.ondragleave=()=>el.classList.remove('drop-target');
   el.ondrop=e=>{e.preventDefault();el.classList.remove('drop-target');let payload;try{payload=JSON.parse(e.dataTransfer.getData('text/plain'))}catch(_){return}
@@ -986,6 +1257,21 @@ function setDetailsSidebarHidden(hidden){
  $('toggleDetailsSidebar').setAttribute('aria-expanded',String(!hidden));
  $('showDetailsSidebar').setAttribute('aria-expanded',String(!hidden));
 }
+function cycleFloorView(){
+ floorView=floorView==='full'?'left':floorView==='left'?'right':'full';
+ applyFloorView();
+}
+$('cycleFloorView').onclick=cycleFloorView;
+$('cycleFloorViewSidebar').onclick=cycleFloorView;
+$('toggleLockCycle').onclick=()=>{
+ const next={none:'left',left:'right',right:'both',both:'none'}[currentLockState()];
+ floorLocks.left=next==='left'||next==='both';
+ floorLocks.right=next==='right'||next==='both';
+ if(floorLocks.left||floorLocks.right){
+  guests.filter(g=>g.t!==null&&((floorLocks.left&&sideForTable(g.t)==='left')||(floorLocks.right&&sideForTable(g.t)==='right'))).forEach(g=>selected.delete(idKey(g)));
+ }
+ saveFloorLocks();updateFloorLockControls();renderSeating();
+};
 $('toggleDetailsSidebar').onclick=()=>setDetailsSidebarHidden(true);
 $('showDetailsSidebar').onclick=()=>setDetailsSidebarHidden(false);
 
