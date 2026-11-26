@@ -473,36 +473,6 @@ textarea{min-height:86px;resize:vertical}
  .sidebar-control-state{font-size:10px}
 }
 
-
-.add-table-card{width:100%;min-height:130px;border:2px dashed #718da5;border-radius:10px;background:linear-gradient(160deg,#1c2935,#17212b);color:#b8d2e7;display:flex;align-items:center;justify-content:center;gap:9px;flex-direction:column;font:600 13px Montserrat,Arial,sans-serif;cursor:pointer;transition:.15s}
-.add-table-card:hover{border-color:#b4d7f2;background:#223342;color:#e2f2ff}
-.add-table-plus{font-size:27px;line-height:1;font-weight:400}
-.add-table-prototype-note{font-size:11px;color:#d4b77a;margin-top:8px}
-
-.floor-side-headings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 30px repeat(3,minmax(0,1fr));column-gap:8px;margin:0 0 9px;text-align:center;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.07em}
-.floor-side-headings>div:first-child{grid-column:1 / span 3}
-.floor-side-headings>div:last-child{grid-column:5 / span 3}
-.add-table-card{width:100%;min-height:130px;border:2px dashed #718da5;border-radius:10px;background:linear-gradient(160deg,#1c2935,#17212b);color:#b8d2e7;display:flex;align-items:center;justify-content:center;gap:9px;flex-direction:column;font:600 13px Montserrat,Arial,sans-serif;cursor:pointer;transition:.15s}
-.add-table-card:hover{border-color:#b4d7f2;background:#223342;color:#e2f2ff}
-.add-table-plus{font-size:27px;line-height:1;font-weight:400}
-.add-table-prototype-note{font-size:11px;color:#d4b77a;margin-top:8px}
-@media(max-width:620px){.floor-side-headings{grid-template-columns:repeat(3,minmax(0,1fr)) 18px repeat(3,minmax(0,1fr));column-gap:4px;font-size:9px}}
-
-.sidebar-bottom-actions{display:flex;gap:7px;align-items:stretch;justify-content:stretch}
-.sidebar-bottom-actions .btn{flex:1;min-width:0}
-.delete-table-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:260px;overflow:auto;margin-top:10px}
-.delete-table-option{display:flex;align-items:center;gap:7px;border:1px solid var(--line,#465563);border-radius:8px;padding:8px;font-size:12px}
-.delete-table-option input{accent-color:#9fc8e8}
-.delete-table-option .small{margin-left:auto}
-
-.delete-table-option{cursor:pointer;user-select:none;position:relative;z-index:1}
-.delete-table-option input.delete-table-checkbox{width:16px;height:16px;flex:0 0 16px;margin:0 2px 0 0;cursor:pointer;pointer-events:auto;position:relative;z-index:2}
-.delete-table-option .delete-table-lock-note{color:#e4c18a}
-.delete-table-option:has(input:checked){border-color:#91b9d8;background:#2b3d4d}
-
-.delete-table-option.is-locked{opacity:.48;cursor:not-allowed}
-.delete-table-option.is-locked input.delete-table-checkbox{cursor:not-allowed;pointer-events:none}
-.delete-table-option.is-locked:has(input:checked){border-color:var(--line,#465563);background:transparent}
 </style>
 </head>
 <body>
@@ -545,7 +515,6 @@ textarea{min-height:86px;resize:vertical}
     <div class="floorplan">
      <div class="floorplan-top"><div class="floor-feature stage">STAGE</div></div>
      <div class="floor-feature dance" style="margin:0 auto 10px;width:34%">DANCE FLOOR</div>
-     <div class="floor-side-headings"><div>GROOM'S GUESTS</div><div aria-hidden="true"></div><div>BRIDE'S GUESTS</div></div>
      <div class="floor-main">
       <div class="floor-side" id="floorLeft"></div>
       <div class="floor-center"><div class="red-carpet">RED CARPET</div></div>
@@ -569,7 +538,7 @@ textarea{min-height:86px;resize:vertical}
     </div>
     <div class="seating-actions"><button type="button" class="btn secondary" id="unassignSelectedBtn" disabled>Unassign Selected</button><button type="button" class="btn secondary" id="deselectSelectedBtn" disabled>Deselect Selected</button><button type="button" class="btn danger" id="deleteSeatingSelectedBtn" disabled>Delete Selected</button></div>
     <aside class="seating-sidepanel" id="guestDetailsPanel"><h3>Guest Details</h3><div class="details-empty">Select a guest name to view or edit their details.</div></aside>
-    <div class="sidebar-bottom-actions"><button type="button" class="btn danger" id="deleteTablesSidebar">Delete Table</button><button type="button" class="btn secondary sidebar-toggle" id="toggleDetailsSidebar" aria-expanded="true">Hide Guest Details</button></div>
+    <button type="button" class="btn secondary sidebar-toggle" id="toggleDetailsSidebar" aria-expanded="true">Hide Guest Details</button>
    </div>
   </div>
  </div>
@@ -651,7 +620,7 @@ textarea{min-height:86px;resize:vertical}
   </div>
  </div>
 </section>
-<div class="footer">Revision 3.6 · Supabase-backed Add/Delete Tables · Based on Development v31 · Connected to the existing Supabase project · Save &amp; Exit commits staged changes.</div>
+<div class="footer">Development Version 31 · Based on Release v2 · Connected to the existing Supabase project · Save &amp; Exit commits staged changes.</div>
 </div>
 <div id="modalRoot"></div>
 <div id="printRoot" aria-hidden="true"></div>
@@ -676,35 +645,19 @@ function setDirectoryStatus(state, message){
  dot.setAttribute('aria-label',label);dot.title=label;
 }
 
-function buildSideRows(ids,side){
- const sorted=[...ids].sort((a,b)=>a-b);
- const rows=[];
- for(let i=0;i<sorted.length;i+=3){
-  const chunk=sorted.slice(i,i+3);
-  if(side==='left')rows.push(chunk.concat(Array(3-chunk.length).fill(null)));
-  else rows.push(Array(3-chunk.length).fill(null).concat(chunk.reverse()));
- }
- return rows.length?rows:[[null,null,null]];
-}
 async function loadGuestList(){
- const [{data:guestData,error:guestError},{data:tableData,error:tableError}]=await Promise.all([
-  supabaseClient.from('wedding_guests').select('id,full_name,table_id,guest_type,requires_seat,remarks,party_key').order('created_at',{ascending:true}),
-  supabaseClient.from('wedding_tables').select('id,table_name,capacity').order('id',{ascending:true})
- ]);
- if(guestError)throw guestError;
- if(tableError)throw tableError;
- guests=(guestData||[]).map(row=>({
-  id:String(row.id),name:row.full_name,t:row.table_id===null?null:Number(row.table_id),
-  type:row.guest_type||'Adult',seat:row.requires_seat!==false,r:row.remarks||'',
+ const { data, error } = await supabaseClient
+  .from('wedding_guests')
+  .select('id,full_name,table_id,guest_type,requires_seat,remarks,party_key')
+  .order('created_at', { ascending: true });
+ if(error) throw error;
+ guests=(data||[]).map(row=>({
+  id:String(row.id), name:row.full_name, t:row.table_id===null?null:Number(row.table_id),
+  type:row.guest_type||'Adult', seat:row.requires_seat!==false, r:row.remarks||'',
   party:row.party_key||('party-'+row.id)
  }));
- tableRecords=(tableData||[]).map(row=>({id:Number(row.id),table_name:row.table_name,capacity:Number(row.capacity||10)}));
- tables=tableRecords.map(t=>t.id);
- committedTableIds=[...tables];
- LEFT_ROWS=buildSideRows(tables.filter(n=>n%2===0),'left');
- RIGHT_ROWS=buildSideRows(tables.filter(n=>n%2===1),'right');
  committed=structuredClone(guests);
- nextId=1;nextParty=guests.length+1;
+ nextId=1; nextParty=guests.length+1;
  databaseReady=true;
  setDirectoryStatus('success','Guest directory loaded successfully');
  refresh();
@@ -719,12 +672,7 @@ async function saveGuestList(){
   remarks:g.r||'',
   party_key:g.party||null
  }));
- const tablePayload=tableRecords
-  .filter(t=>tables.includes(Number(t.id)))
-  .map(t=>({id:Number(t.id),table_name:t.table_name||('Table '+String(t.id).padStart(2,'0')),capacity:Number(t.capacity||10)}));
- const known=new Set(tablePayload.map(t=>t.id));
- tables.forEach(id=>{if(!known.has(Number(id)))tablePayload.push({id:Number(id),table_name:'Table '+String(id).padStart(2,'0'),capacity:10});});
- const { data, error } = await supabaseClient.rpc('save_wedding_guest_list_with_tables',{p_guests:payload,p_tables:tablePayload});
+ const { data, error } = await supabaseClient.rpc('save_wedding_guest_list',{p_guests:payload});
  if(error) throw error;
  await loadGuestList();
  return data;
@@ -734,9 +682,7 @@ const initial=[];
 let guests=[], committed=[];
 let selected=new Set(), newIds=new Set(), nextId=1, nextParty=1;
 let dirty=false, showRemarks=false, remarkDirty=false, previewRows=[], pendingRows=[], dupNames=[];
-const $=id=>document.getElementById(id);
-let tables=Array.from({length:21},(_,i)=>i+1), committedTableIds=[...tables];
-let tableRecords=tables.map(id=>({id,table_name:'Table '+String(id).padStart(2,'0'),capacity:10})), committedTableRecords=structuredClone(tableRecords);
+const $=id=>document.getElementById(id), tables=Array.from({length:21},(_,i)=>i+1);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const lowerParticles=new Set(['bin','binti','bt','bte','a/l','a/p']);
 function formatName(value){
@@ -769,7 +715,7 @@ let floorView=localStorage.getItem(FLOOR_VIEW_KEY)||'full';
 if(!['full','left','right'].includes(floorView))floorView='full';
 let floorLocks={left:false,right:false,tables:{}};
 try{floorLocks={...floorLocks,...JSON.parse(localStorage.getItem(FLOOR_LOCK_KEY)||'{}')};}catch(e){}
-const sideForTable=n=>Number(n)%2===0?'left':'right';
+const sideForTable=n=>[2,4,6,8,10,12,14,16,18,20].includes(Number(n)?Number(n):0)?'left':'right';
 const isTableLocked=n=>!!floorLocks[sideForTable(n)]||!!floorLocks.tables[String(n)];
 function saveFloorLocks(){localStorage.setItem(FLOOR_LOCK_KEY,JSON.stringify(floorLocks));}
 function currentLockState(){
@@ -922,11 +868,11 @@ function exportGuestListPDF(){
  const hero=document.querySelector('.hero');
  const leftMap=new Map([...source.querySelectorAll('#floorLeft .seat-table')].map(c=>[Number(c.dataset.dropTable),c]));
  const rightMap=new Map([...source.querySelectorAll('#floorRight .seat-table')].map(c=>[Number(c.dataset.dropTable),c]));
- const leftRows=LEFT_ROWS.map(r=>[...r]);
- const rightRows=RIGHT_ROWS.map(r=>[...r]);
+ const leftRows=[[2,4,6],[8,10,12],[14,16,18],[20,null,null]];
+ const rightRows=[[5,3,1],[11,9,7],[17,15,13],[null,21,19]];
  function makePage(pageNo,startRow,endRow){
   const page=document.createElement('section');
-  page.className='print-page print-floorplan-page '+(pageNo===1?'print-page-one':'print-page-two');
+  page.className='print-page print-floorplan-page '+(pageNo===2?'print-page-two':'print-page-one');
   if(pageNo===1&&hero)page.append(hero.cloneNode(true));
   else {const heading=document.createElement('h2');heading.className='print-heading';heading.textContent='Table Arrangement — Continued';page.append(heading);}
   const fp=document.createElement('div');fp.className='floorplan print-fp';
@@ -936,7 +882,7 @@ function exportGuestListPDF(){
    if(top)fp.append(top.cloneNode(true));
    if(dance)fp.append(dance.cloneNode(true));
   }
-  const main=document.createElement('div');main.className='floor-main print-floor-main';main.style.gridTemplateRows=`repeat(${endRow-startRow},minmax(0,1fr))`;
+  const main=document.createElement('div');main.className='floor-main print-floor-main';
   for(let r=startRow;r<endRow;r++){
    for(let c=0;c<3;c++){
     const ln=leftRows[r][c],rn=rightRows[r][c];
@@ -958,8 +904,8 @@ function exportGuestListPDF(){
   page.querySelectorAll('.seat-table').forEach(card=>card.classList.remove('over-capacity','drop-target'));
   root.append(page);
  }
- const rowCount=Math.max(leftRows.length,rightRows.length);
- for(let start=0,pageNo=1;start<rowCount;start+=2,pageNo++)makePage(pageNo,start,Math.min(start+2,rowCount));
+ makePage(1,0,2);
+ makePage(2,2,4);
  window.print();
 }
 
@@ -970,21 +916,25 @@ function exportSidePDF(side){
  if(!source)return;
  const leftMap=new Map([...source.querySelectorAll('#floorLeft .seat-table')].map(c=>[Number(c.dataset.dropTable),c]));
  const rightMap=new Map([...source.querySelectorAll('#floorRight .seat-table')].map(c=>[Number(c.dataset.dropTable),c]));
- const rows=side==='left'?LEFT_ROWS.map(r=>[...r]):RIGHT_ROWS.map(r=>[...r]);
+ const rows=side==='left'?[[2,4,6],[8,10,12],[14,16,18],[20,null,null]]:[[5,3,1],[11,9,7],[17,15,13],[null,21,19]];
  const map=side==='left'?leftMap:rightMap;
- function makeSidePage(pageNo,startRow,endRow){
+ function makeSidePage(startRow,endRow){
   const page=document.createElement('section');
   page.className='print-page print-floorplan-page print-side-page '+(side==='right'?'right-side':'left-side');
-  if(pageNo===1&&hero)page.append(hero.cloneNode(true));
-  else {const heading=document.createElement('h2');heading.className='print-heading';heading.textContent='Table Arrangement — Continued';page.append(heading);}
+  if(hero)page.append(hero.cloneNode(true));
   const fp=document.createElement('div');fp.className='floorplan print-fp';
-  if(pageNo===1){
+  if(startRow===0){
    const top=source.querySelector('.floorplan-top');
    const dance=source.querySelector('.floor-feature.dance');
    if(top)fp.append(top.cloneNode(true));
    if(dance)fp.append(dance.cloneNode(true));
+  }else{
+   const heading=document.createElement('h2');
+   heading.className='print-heading';
+   heading.textContent='Table Arrangement — Continued';
+   page.append(heading);
   }
-  const main=document.createElement('div');main.className='floor-main side-print-main';main.style.gridTemplateRows=`repeat(${endRow-startRow},minmax(0,1fr))`;
+  const main=document.createElement('div');main.className='floor-main side-print-main';
   for(let r=startRow;r<endRow;r++){
    for(let c=0;c<3;c++){
     const tableNo=rows[r][c];
@@ -1005,17 +955,14 @@ function exportSidePDF(side){
   page.querySelectorAll('.seat-table').forEach(card=>card.classList.remove('over-capacity','drop-target'));
   root.append(page);
  }
- for(let start=0,pageNo=1;start<rows.length;start+=2,pageNo++)makeSidePage(pageNo,start,Math.min(start+2,rows.length));
+ makeSidePage(0,2);
+ makeSidePage(2,4);
  window.print();
 }
 $('exportPdf').addEventListener('click',exportGuestListPDF);
 $('exportLeftPdf').addEventListener('click',()=>exportSidePDF('left'));
 $('exportRightPdf').addEventListener('click',()=>exportSidePDF('right'));
 window.addEventListener('afterprint',()=>{$('printRoot').innerHTML=''});
-$('seatingWorkspace').addEventListener('click',e=>{
- const trigger=e.target.closest('[data-open-add-table]');
- if(trigger&&isEditing())openAddTableModal(trigger.dataset.openAddTable);
-});
 function refresh(){render();bindGuestEvents()}
 function modal(title,body,buttons){
  $('modalRoot').innerHTML=`<div class="modal"><div class="modal-card"><h3>${title}</h3>${body}<div class="modal-actions">${buttons}</div></div></div>`;
@@ -1156,7 +1103,7 @@ $('discardChangesBtn').onclick=()=>{
  modal('Discard All Changes?',`<p>This will discard every change made since the last saved version and return the page to Public View.</p>`,
  `<button class="btn danger" id="confirmDiscard">Discard Changes</button><button class="btn secondary" id="cancelDiscard">Cancel</button>`);
  $('confirmDiscard').onclick=()=>{
-  guests=structuredClone(committed);dirty=false;remarkDirty=false;newIds.clear();selected.clear();showRemarks=false;prototypeAddedTables=[];tables=[...committedTableIds];tableRecords=structuredClone(committedTableRecords);LEFT_ROWS=buildSideRows(tables.filter(n=>n%2===0),'left');RIGHT_ROWS=buildSideRows(tables.filter(n=>n%2===1),'right');
+  guests=structuredClone(committed);dirty=false;remarkDirty=false;newIds.clear();selected.clear();showRemarks=false;
   viewState='public';$('modalRoot').innerHTML='';
   supabaseClient.auth.signOut().then(()=>{supabaseSession=null;refresh()});
 
@@ -1164,9 +1111,8 @@ $('discardChangesBtn').onclick=()=>{
  $('cancelDiscard').onclick=()=>$('modalRoot').innerHTML='';
 };
 // Seating Arrangement workspace interactions.
-let LEFT_ROWS=[[2,4,6],[8,10,12],[14,16,18],[20,null,null]];
-let RIGHT_ROWS=[[5,3,1],[11,9,7],[17,15,13],[null,21,19]];
-let prototypeAddedTables=[];
+const LEFT_ROWS=[[2,4,6],[8,10,12],[14,16,18],[20,null,null]];
+const RIGHT_ROWS=[[5,3,1],[11,9,7],[17,15,13],[null,21,19]];
 function tableCardHTML(n){
  if(!n)return '<div aria-hidden="true"></div>';
  const rows=guests.filter(g=>g.t===n),seats=rows.filter(g=>g.seat).length,over=seats>10;
@@ -1194,125 +1140,10 @@ function renderPublicFloorplan(){
  $('floorRightPublic').innerHTML=RIGHT_ROWS.flat().map(publicTableCardHTML).join('');
  applyFloorView();
 }
-function nextAvailableTableNumber(side){
- const all=[...LEFT_ROWS.flat(),...RIGHT_ROWS.flat()].filter(Boolean).map(Number);
- const parity=side==='left'?0:1;
- let candidate=parity===0?22:23;
- while(all.includes(candidate))candidate+=2;
- return candidate;
-}
-function addPrototypeTable(number,side,rowsToAdd=[]){
- const rows=side==='left'?LEFT_ROWS:RIGHT_ROWS;
- let placed=false;
- if(side==='left'){
-  for(let r=0;r<rows.length&&!placed;r++){
-   const empty=rows[r].findIndex(value=>value===null);
-   if(empty!==-1){rows[r][empty]=number;placed=true;}
-  }
-  if(!placed)rows.push([number,null,null]);
- }else{
-  for(let r=0;r<rows.length&&!placed;r++){
-   const empty=rows[r].lastIndexOf(null);
-   if(empty!==-1){rows[r][empty]=number;placed=true;}
-  }
-  if(!placed)rows.push([null,null,number]);
- }
- rowsToAdd.forEach(g=>{g.t=number;});
- guests.push(...rowsToAdd);
- rowsToAdd.forEach(g=>newIds.add(g.id));
- if(rowsToAdd.length){nextId+=rowsToAdd.length;nextParty+=new Set(rowsToAdd.map(g=>g.party)).size;}
- prototypeAddedTables.push(number);
- tables=Array.from(new Set([...tables,Number(number)])).sort((a,b)=>a-b);
- tableRecords.push({id:Number(number),table_name:'Table '+String(number).padStart(2,'0'),capacity:10});
- markDirty();refresh();
-}
-function openAddTableModal(side){
- const number=nextAvailableTableNumber(side);
- const sideLabel=side==='left'?"Groom's side · Left":"Bride's side · Right";
- modal('Add a new table',`
-  <p class="small">A new table will be added to your seating arrangement.</p>
-  <p class="small" style="margin:8px 0 14px">Family side: <strong>${sideLabel}</strong></p>
-  <label for="newTableGuestNames" class="small" style="display:block;margin:12px 0 6px;font-weight:700">GUEST NAMES (OPTIONAL)</label>
-  <textarea id="newTableGuestNames" rows="5" placeholder="One guest or party per line&#10;Example: Ahmad bin Ali&#10;Siti Aminah +2"></textarea>
-  <div class="small" style="margin-top:5px">Use the same format as Add Guest. Leave empty to create an empty table.</div>
-  <div id="newTableDuplicateWarning" class="small" style="margin-top:8px"></div>
-  <p class="add-table-prototype-note">Prototype only: table additions are temporary and are not saved to Supabase.</p>`,
-  `<button type="button" class="btn secondary" id="cancelAddTable">Cancel</button><button type="button" class="btn" id="confirmAddTable">＋ Add Table</button>`);
- $('cancelAddTable').onclick=()=>$('modalRoot').innerHTML='';
- $('confirmAddTable').onclick=()=>{
-  const lines=$('newTableGuestNames').value.split('\n').map(x=>x.trim()).filter(Boolean);
-  let parsed=[];
-  if(lines.length){
-   let id=nextId,party=nextParty;
-   for(const line of lines){
-    const result=parseLine(line,'party'+party,id);
-    if(result.error){$('newTableDuplicateWarning').textContent=result.error;$('newTableDuplicateWarning').className='small warn';return;}
-    parsed.push(...result.rows);id+=result.rows.length;party++;
-   }
-   const duplicates=findDuplicates(parsed);
-   if(duplicates.length){
-    const warning=$('newTableDuplicateWarning');
-    if(warning.dataset.confirm!=='yes'){
-     warning.innerHTML=`Possible duplicates found: ${duplicates.map(esc).join(', ')}. Click Add Table again to add anyway.`;
-     warning.className='small warn';warning.dataset.confirm='yes';return;
-    }
-   }
-  }
-  addPrototypeTable(number,side,parsed);
-  $('modalRoot').innerHTML='';
-  const status=$('moveStatus');if(status){status.textContent=`Table ${String(number).padStart(2,'0')} added to ${sideLabel.toLowerCase()}${parsed.length?` with ${parsed.length} guest entries`:''}.`;status.className='statusline'}
- };
-}
-function openDeleteTablesModal(){
- const all=[...LEFT_ROWS.flat(),...RIGHT_ROWS.flat()].filter(Boolean).map(Number).sort((a,b)=>a-b);
- if(!all.length)return;
- const options=all.map(n=>{const locked=isTableLocked(n);return `<label class="delete-table-option${locked?' is-locked':''}" data-table-option="${n}"><input type="checkbox" class="delete-table-checkbox" value="${n}" aria-label="Select table ${String(n).padStart(2,'0')}" ${locked?'disabled':''}><span>TABLE ${String(n).padStart(2,'0')}</span><span class="small">${peopleCount(n)} guests</span>${locked?'<span class="small delete-table-lock-note">Locked</span>':''}</label>`}).join('');
- modal('Delete tables',`
-  <p class="small">Select the tables you want to remove. Guests assigned to those tables will be moved to Unassigned Guests.</p>
-  <div class="delete-table-list">${options}</div>
-  <div id="deleteTableStatus" class="small" style="margin-top:8px"></div>`,
-  `<button type="button" class="btn secondary" id="cancelDeleteTables">Cancel</button><button type="button" class="btn danger" id="confirmDeleteTables">Delete Selected Tables</button>`);
- $('cancelDeleteTables').onclick=()=>$('modalRoot').innerHTML='';
- $('confirmDeleteTables').onclick=()=>{
-  const selectedTables=[...document.querySelectorAll('.delete-table-option input:checked')].map(el=>Number(el.value));
-  if(!selectedTables.length){$('deleteTableStatus').textContent='Select at least one table.';return;}
-  const names=selectedTables.map(n=>'Table '+String(n).padStart(2,'0')).join(', ');
-  if(!window.confirm(`Delete ${names}? Assigned guests will be moved to Unassigned Guests.`))return;
-  guests.forEach(g=>{if(selectedTables.includes(Number(g.t)))g.t=null;});
-  [[LEFT_ROWS,'left'],[RIGHT_ROWS,'right']].forEach(([rows,side])=>{
-   const kept=rows.flat().filter(n=>n!==null&&!selectedTables.includes(Number(n)));
-   rows.length=0;
-   for(let i=0;i<kept.length;i+=3){
-    const chunk=kept.slice(i,i+3);
-    const padding=Array(Math.max(0,3-chunk.length)).fill(null);
-    rows.push(side==='left'?chunk.concat(padding):padding.concat(chunk));
-   }
-  });
-  prototypeAddedTables=prototypeAddedTables.filter(n=>!selectedTables.includes(n));
-  tables=tables.filter(n=>!selectedTables.includes(Number(n)));
-  tableRecords=tableRecords.filter(t=>!selectedTables.includes(Number(t.id)));
-  selected.clear();markDirty();$('modalRoot').innerHTML='';refresh();
-  const status=$('moveStatus');if(status){status.textContent=`${selectedTables.length} table(s) deleted. Assigned guests moved to Unassigned Guests.`;status.className='statusline'}
- };
-}
 function renderSeating(){
  if(!isEditing())return;
- const renderSide=(rows,side)=>{
-  const root=$(side==='left'?'floorLeft':'floorRight');
-  const addCard='<button type="button" class="add-table-card" data-open-add-table="'+side+'"><span class="add-table-plus">＋</span><span>Add Table</span></button>';
-  let htmlRows=rows.map(row=>row.map(n=>n?tableCardHTML(n):'<div aria-hidden="true"></div>'));
-  let inserted=false;
-  for(let r=0;r<htmlRows.length&&!inserted;r++){
-   const empty=side==='left'?rows[r].findIndex(n=>n===null):rows[r].lastIndexOf(null);
-   if(empty!==-1){htmlRows[r][empty]=addCard;inserted=true;}
-  }
-  if(!inserted)htmlRows.push(side==='left'?[addCard,'<div aria-hidden="true"></div>','<div aria-hidden="true"></div>']:['<div aria-hidden="true"></div>','<div aria-hidden="true"></div>',addCard]);
-  root.innerHTML=htmlRows.map(row=>row.join('')).join('');
-  [...root.children].forEach((el,i)=>{el.style.gridColumn=String((i%3)+(side==='left'?1:5));el.style.gridRow=String(Math.floor(i/3)+1)});
- };
- renderSide(LEFT_ROWS,'left');renderSide(RIGHT_ROWS,'right');
- const center=document.querySelector('#seatingWorkspace .floor-center');
- if(center)center.style.gridRow=`1 / span ${Math.max(LEFT_ROWS.length,RIGHT_ROWS.length)}`;
+ $('floorLeft').innerHTML=LEFT_ROWS.flat().map(tableCardHTML).join('');
+ $('floorRight').innerHTML=RIGHT_ROWS.flat().map(tableCardHTML).join('');
  applyFloorView();updateFloorLockControls();
  const ua=unassigned();$('seatingUnassignedCount').textContent=ua.length+' guests';
  const allUa=ua.length>0&&ua.every(g=>selected.has(idKey(g)));$('selectAllSeatingUnassigned').textContent=allUa?'Deselect All':'Select All';$('selectAllSeatingUnassigned').disabled=ua.length===0;
@@ -1442,7 +1273,6 @@ $('toggleLockCycle').onclick=()=>{
  saveFloorLocks();updateFloorLockControls();renderSeating();
 };
 $('toggleDetailsSidebar').onclick=()=>setDetailsSidebarHidden(true);
-$('deleteTablesSidebar').onclick=openDeleteTablesModal;
 $('showDetailsSidebar').onclick=()=>setDetailsSidebarHidden(false);
 
 // Load the saved guest directory on every page visit or browser refresh.
